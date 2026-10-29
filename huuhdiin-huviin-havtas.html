@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Хүүхдийн хувийн хавтас</title>
+<style>
+  :root {
+    --ink: #1d1d1f;
+    --muted: #5f6368;
+    --line: #9aa0a6;
+    --accent: #2a5d8f;
+    --bg: #f3f4f6;
+    --paper: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 13px/1.45 "Times New Roman", Georgia, serif;
+  }
+  .toolbar {
+    max-width: 210mm; margin: 16px auto 0; padding: 0 16px;
+    display: flex; gap: 8px; justify-content: flex-end;
+  }
+  .toolbar button {
+    font: inherit; padding: 6px 14px; border: 1px solid var(--accent);
+    background: var(--accent); color: #fff; border-radius: 4px; cursor: pointer;
+  }
+  .page {
+    max-width: 210mm; margin: 16px auto; padding: 18mm 16mm;
+    background: var(--paper); box-shadow: 0 1px 4px rgba(0,0,0,.12);
+  }
+  .page + .page { margin-top: 24px; }
+  h1 { text-align: center; font-size: 20px; letter-spacing: .5px; margin: 0 0 4px; text-transform: uppercase; }
+  .sub { text-align: center; color: var(--muted); margin-bottom: 18px; }
+  h2 {
+    font-size: 14px; margin: 20px 0 8px; padding-bottom: 3px;
+    border-bottom: 2px solid var(--accent); color: var(--accent); text-transform: uppercase;
+  }
+  h3 { font-size: 13px; margin: 12px 0 6px; }
+  .head { display: grid; grid-template-columns: 1fr 3cm; gap: 16px; align-items: start; }
+  .photo {
+    width: 3cm; height: 4cm; border: 1px dashed var(--line);
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; color: var(--muted); font-size: 11px;
+  }
+  .row { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 5px 0; }
+  .f { display: flex; align-items: baseline; gap: 6px; flex: 1 1 220px; min-width: 0; }
+  .f.w { flex-basis: 100%; }
+  .f.s { flex: 0 1 160px; }
+  .f label { white-space: nowrap; }
+  .f input {
+    flex: 1; min-width: 40px; border: 0; border-bottom: 1px solid var(--line);
+    font: inherit; padding: 1px 2px; background: transparent; color: var(--ink);
+  }
+  .f input:focus { outline: none; border-bottom-color: var(--accent); }
+  .checks { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 5px 0; }
+  .checks label { white-space: nowrap; }
+  table { width: 100%; border-collapse: collapse; margin: 6px 0; table-layout: fixed; }
+  th, td { border: 1px solid var(--line); padding: 3px 4px; vertical-align: top; }
+  th { background: #eef2f7; font-weight: bold; font-size: 12px; text-align: center; }
+  td { height: 24px; }
+  td[contenteditable]:focus { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .tall td { height: 48px; }
+  textarea {
+    width: 100%; min-height: 56px; border: 1px solid var(--line); font: inherit;
+    padding: 4px; resize: vertical; background: transparent;
+  }
+  .sign { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 18px; }
+  .note { color: var(--muted); font-size: 11px; }
+  .wrap { overflow-x: auto; }
+
+  @media (max-width: 640px) {
+    .page { padding: 16px; }
+    .head { grid-template-columns: 1fr; }
+    .sign { grid-template-columns: 1fr; }
+    table { font-size: 11px; }
+  }
+  @media print {
+    body { background: #fff; }
+    .toolbar { display: none; }
+    .page { box-shadow: none; margin: 0; padding: 0; max-width: none; page-break-after: always; }
+    .page:last-child { page-break-after: auto; }
+    textarea { resize: none; }
+    h2 { break-after: avoid; }
+    table, .sign { break-inside: avoid; }
+  }
+  @page { size: A4; margin: 15mm; }
+</style>
+</head>
+<body>
+
+<div class="toolbar"><button type="button" onclick="window.print()">Хэвлэх</button></div>
+
+<!-- ============ 1-р хуудас ============ -->
+<section class="page">
+  <div class="row">
+    <div class="f"><label>Цэцэрлэгийн нэр:</label><input></div>
+    <div class="f s"><label>Хавтасны №</label><input></div>
+  </div>
+
+  <h1>Хүүхдийн хувийн хавтас</h1>
+  <div class="sub">(Хувийн хэрэг)</div>
+
+  <h2>1. Хүүхдийн ерөнхий мэдээлэл</h2>
+  <div class="head">
+    <div>
+      <div class="row"><div class="f w"><label>Ургийн овог:</label><input></div></div>
+      <div class="row"><div class="f w"><label>Эцэг/эхийн нэр:</label><input></div></div>
+      <div class="row"><div class="f w"><label>Өөрийн нэр:</label><input></div></div>
+      <div class="row">
+        <div class="f"><label>Регистрийн дугаар:</label><input></div>
+      </div>
+      <div class="checks"><span>Хүйс:</span>
+        <label><input type="checkbox"> Эрэгтэй</label>
+        <label><input type="checkbox"> Эмэгтэй</label>
+      </div>
+      <div class="row">
+        <div class="f"><label>Төрсөн он, сар, өдөр:</label><input></div>
+      </div>
+    </div>
+    <div class="photo">3×4 хэмжээтэй<br>зураг</div>
+  </div>
+  <div class="row">
+    <div class="f"><label>Төрсөн газар (аймаг/хот, сум/дүүрэг):</label><input></div>
+  </div>
+  <div class="row">
+    <div class="f"><label>Яс үндэс:</label><input></div>
+    <div class="f"><label>Иргэншил:</label><input></div>
+  </div>
+  <div class="row">
+    <div class="f w"><label>Оршин суугаа хаяг (дүүрэг, хороо, байр/гудамж, тоот):</label><input></div>
+  </div>
+  <div class="row"><div class="f w"><label></label><input></div></div>
+  <div class="row">
+    <div class="f"><label>Гэрийн утас:</label><input></div>
+    <div class="f"><label>Хүүхдийн эх хэл:</label><input></div>
+  </div>
+
+  <h2>2. Цэцэрлэгт элссэн байдал</h2>
+  <div class="row">
+    <div class="f"><label>Элссэн он, сар, өдөр:</label><input></div>
+    <div class="f"><label>Тушаалын дугаар:</label><input></div>
+  </div>
+  <div class="row">
+    <div class="f"><label>Элсэх үеийн нас:</label><input></div>
+    <div class="f"><label>Бүлэг:</label><input></div>
+  </div>
+  <div class="row">
+    <div class="f"><label>Бүлгийн багш:</label><input></div>
+    <div class="f"><label>Туслах багш:</label><input></div>
+  </div>
+  <div class="row">
+    <div class="f w"><label>Өмнө хамрагдаж байсан цэцэрлэг / хувилбарт сургалт:</label><input></div>
+  </div>
+
+  <h2>3. Гэр бүлийн мэдээлэл</h2>
+  <div class="wrap">
+  <table>
+    <colgroup><col style="width:24%"><col><col></colgroup>
+    <tr><th></th><th>Эцэг</th><th>Эх</th></tr>
+    <tr><th style="text-align:left">Овог, нэр</th><td contenteditable></td><td contenteditable></td></tr>
+    <tr><th style="text-align:left">Регистрийн дугаар</th><td contenteditable></td><td contenteditable></td></tr>
+    <tr><th style="text-align:left">Төрсөн он</th><td contenteditable></td><td contenteditable></td></tr>
+    <tr><th style="text-align:left">Боловсрол, мэргэжил</th><td contenteditable></td><td contenteditable></td></tr>
+    <tr><th style="text-align:left">Ажлын газар</th><td contenteditable></td><td contenteditable></td></tr>
+    <tr><th style="text-align:left">Албан тушаал</th><td contenteditable></td><td contenteditable></td></tr>
+    <tr><th style="text-align:left">Гар утас</th><td contenteditable></td><td contenteditable></td></tr>
+    <tr><th style="text-align:left">И-мэйл</th><td contenteditable></td><td contenteditable></td></tr>
+  </table>
+  </div>
+
+  <h3>Асран хамгаалагч (эцэг, эхээс өөр бол)</h3>
+  <div class="row">
+    <div class="f"><label>Овог, нэр:</label><input></div>
+    <div class="f s"><label>Хэн болох:</label><input></div>
+  </div>
+  <div class="row">
+    <div class="f"><label>Регистрийн дугаар:</label><input></div>
+    <div class="f"><label>Утас:</label><input></div>
+  </div>
+
+  <h3>Гэр бүлийн байдал</h3>
+  <div class="checks">
+    <label><input type="checkbox"> Бүтэн өрх</label>
+    <label><input type="checkbox"> Өрх толгойлсон эх</label>
+    <label><input type="checkbox"> Өрх толгойлсон эцэг</label>
+    <label><input type="checkbox"> Асран хамгаалагчтай</label>
+    <label><input type="checkbox"> Бүтэн өнчин</label>
+    <label><input type="checkbox"> Хагас өнчин</label>
+    <label><input type="checkbox"> Олон хүүхэдтэй</label>
+    <label><input type="checkbox"> Амьжиргааны түвшин доогуур</label>
+    <label><input type="checkbox"> Хөгжлийн бэрхшээлтэй гишүүнтэй</label>
+  </div>
+  <div class="checks"><span>Орон сууцны нөхцөл:</span>
+    <label><input type="checkbox"> Орон сууц</label>
+    <label><input type="checkbox"> Хашаа байшин</label>
+    <label><input type="checkbox"> Гэр</label>
+    <label><input type="checkbox"> Түрээсийн</label>
+  </div>
+  <div class="row">
+    <div class="f s"><label>Ам бүл:</label><input></div>
+    <div class="f s"><label>Хүүхдийн тоо:</label><input></div>
+    <div class="f s"><label>Хэд дэх хүүхэд:</label><input></div>
+  </div>
+
+  <h3>Ах, эгч, дүү</h3>
+  <div class="wrap">
+  <table>
+    <colgroup><col style="width:6%"><col><col style="width:14%"><col style="width:14%"><col></colgroup>
+    <tr><th>№</th><th>Нэр</th><th>Хэн болох</th><th>Төрсөн он</th><th>Сургууль / цэцэрлэг / ажил</th></tr>
+    <tr><td>1</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>2</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>3</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- ============ 2-р хуудас ============ -->
+<section class="page">
+  <h2>4. Эрүүл мэндийн мэдээлэл</h2>
+  <div class="row">
+    <div class="f"><label>Харьяа өрхийн эрүүл мэндийн төв:</label><input></div>
+    <div class="f s"><label>Цусны бүлэг:</label><input></div>
+  </div>
+  <div class="row">
+    <div class="f"><label>Өрхийн эмч:</label><input></div>
+    <div class="f"><label>Утас:</label><input></div>
+  </div>
+  <div class="checks"><span>Харшил:</span>
+    <label><input type="checkbox"> Хүнс</label>
+    <label><input type="checkbox"> Эм</label>
+    <label><input type="checkbox"> Тоос, цэцгийн тоос</label>
+    <label><input type="checkbox"> Амьтан</label>
+    <label><input type="checkbox"> Байхгүй</label>
+  </div>
+  <div class="row"><div class="f w"><label>Харшлын тайлбар (юунд, ямар шинж илэрдэг):</label><input></div></div>
+  <div class="row"><div class="f w"><label>Архаг болон удаан хугацааны өвчин:</label><input></div></div>
+  <div class="row"><div class="f w"><label>Байнга хэрэглэдэг эм:</label><input></div></div>
+  <div class="row"><div class="f w"><label>Хөгжлийн бэрхшээл / онцгой хэрэгцээ:</label><input></div></div>
+  <div class="row"><div class="f w"><label>Хоолны хязгаарлалт (цагаан хоолтон, шашны г.м):</label><input></div></div>
+  <div class="checks"><span>Дархлаажуулалт (вакцины дэвтрийн дагуу):</span>
+    <label><input type="checkbox"> Бүрэн</label>
+    <label><input type="checkbox"> Дутуу</label>
+  </div>
+
+  <h3>Өсөлт, бие бялдрын хэмжилт</h3>
+  <div class="wrap">
+  <table>
+    <tr><th>Огноо</th><th>Нас</th><th>Өндөр (см)</th><th>Жин (кг)</th><th>Харах / сонсох</th><th>Шүд</th><th>Тэмдэглэл</th></tr>
+    <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+  </table>
+  </div>
+
+  <h2>5. Хүүхдийн онцлог (эцэг эхийн бөглөх)</h2>
+  <h3>Зан төлөв, сонирхол, дуртай зүйл</h3>
+  <textarea></textarea>
+  <h3>Хооллолт, унтах дадал</h3>
+  <textarea></textarea>
+  <h3>Айдас, санаа зовоосон зүйл, багшид анхааруулах зүйл</h3>
+  <textarea></textarea>
+
+  <h2>6. Хүүхдийг авах эрхтэй хүмүүс</h2>
+  <div class="wrap">
+  <table>
+    <colgroup><col style="width:6%"><col><col style="width:18%"><col style="width:22%"><col style="width:20%"></colgroup>
+    <tr><th>№</th><th>Овог, нэр</th><th>Хэн болох</th><th>Регистрийн дугаар</th><th>Утас</th></tr>
+    <tr><td>1</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>2</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>3</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+  </table>
+  </div>
+  <p class="note">Жагсаалтад ороогүй хүнд хүүхдийг эцэг эхийн урьдчилсан мэдэгдэлгүйгээр хүлээлгэн өгөхгүй. 16 насанд хүрээгүй хүнд хүүхдийг өгөхгүй.</p>
+
+  <h3>Онцгой үед холбоо барих</h3>
+  <div class="row">
+    <div class="f"><label>Овог, нэр:</label><input></div>
+    <div class="f"><label>Утас:</label><input></div>
+  </div>
+</section>
+
+<!-- ============ 3-р хуудас ============ -->
+<section class="page">
+  <h2>7. Хүүхдийн хөгжлийн үнэлгээ</h2>
+  <p class="note">Үнэлгээ: Х — хангалттай, Д — дунд, С — сайжруулах шаардлагатай. Хичээлийн жилийн эхэнд болон төгсгөлд бөглөнө.</p>
+  <div class="wrap">
+  <table class="tall">
+    <colgroup><col style="width:12%"><col style="width:10%"><col style="width:9%"><col style="width:9%"><col style="width:9%"><col style="width:9%"><col style="width:9%"><col></colgroup>
+    <tr>
+      <th>Хичээлийн жил</th><th>Бүлэг</th><th>Хөдөлгөөн, эрүүл мэнд</th><th>Танин мэдэхүй</th>
+      <th>Хэл яриа</th><th>Нийгэмшил, сэтгэл хөдлөл</th><th>Урлаг, бүтээлч байдал</th><th>Багшийн дүгнэлт</th>
+    </tr>
+    <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+  </table>
+  </div>
+
+  <h3>Онцлох амжилт, оролцсон арга хэмжээ</h3>
+  <textarea></textarea>
+
+  <h2>8. Хавсаргасан бичиг баримт</h2>
+  <div class="checks" style="flex-direction:column; gap:4px">
+    <label><input type="checkbox"> Эцэг эх / асран хамгаалагчийн өргөдөл</label>
+    <label><input type="checkbox"> Хүүхдийн төрсний гэрчилгээний хуулбар</label>
+    <label><input type="checkbox"> Эцэг, эхийн иргэний үнэмлэхний хуулбар</label>
+    <label><input type="checkbox"> Оршин суугаа хаягийн тодорхойлолт</label>
+    <label><input type="checkbox"> Эрүүл мэндийн үзлэгийн хуудас (өрхийн эмнэлгийн)</label>
+    <label><input type="checkbox"> Дархлаажуулалтын дэвтрийн хуулбар</label>
+    <label><input type="checkbox"> 3×4 хэмжээтэй зураг (2 хувь)</label>
+    <label><input type="checkbox"> Эцэг эхтэй байгуулсан гэрээ</label>
+    <label><input type="checkbox"> Бусад: <input style="border:0;border-bottom:1px solid var(--line);font:inherit;width:220px"></label>
+  </div>
+
+  <h2>9. Зөвшөөрөл</h2>
+  <div class="checks" style="flex-direction:column; gap:4px">
+    <label><input type="checkbox"> Хүүхдийн зураг, бичлэгийг цэцэрлэгийн дотоод мэдээлэл, самбарт ашиглахыг зөвшөөрнө</label>
+    <label><input type="checkbox"> Цэцэрлэгийн цахим хуудас, олон нийтийн сүлжээнд ашиглахыг зөвшөөрнө</label>
+    <label><input type="checkbox"> Цэцэрлэгээс зохион байгуулах аялал, гадуурх үйл ажиллагаанд оролцохыг зөвшөөрнө</label>
+    <label><input type="checkbox"> Яаралтай үед эмнэлгийн анхны тусламж үзүүлэхийг зөвшөөрнө</label>
+  </div>
+  <p class="note">Дээрх мэдээлэл үнэн зөв болохыг баталж, өөрчлөлт гарсан тохиолдолд цэцэрлэгт нэн даруй мэдэгдэх үүрэг хүлээв. Хувийн мэдээллийг зөвхөн цэцэрлэгийн үйл ажиллагаанд ашиглаж, хуулийн дагуу нууцална.</p>
+
+  <h2>10. Шилжилт хөдөлгөөн, төгсөлт</h2>
+  <div class="row">
+    <div class="f"><label>Гарсан / төгссөн огноо:</label><input></div>
+    <div class="f"><label>Тушаалын дугаар:</label><input></div>
+  </div>
+  <div class="row"><div class="f w"><label>Шалтгаан (сургуульд элссэн, шилжсэн г.м):</label><input></div></div>
+  <div class="row"><div class="f w"><label>Шилжсэн байгууллага:</label><input></div></div>
+
+  <div class="sign">
+    <div>
+      <div class="row"><div class="f w"><label>Эцэг эх / асран хамгаалагч:</label><input></div></div>
+      <div class="row"><div class="f w"><label>Гарын үсэг:</label><input></div></div>
+      <div class="row"><div class="f w"><label>Огноо:</label><input></div></div>
+    </div>
+    <div>
+      <div class="row"><div class="f w"><label>Хүлээн авсан багш:</label><input></div></div>
+      <div class="row"><div class="f w"><label>Гарын үсэг:</label><input></div></div>
+      <div class="row"><div class="f w"><label>Огноо:</label><input></div></div>
+    </div>
+  </div>
+  <div class="row" style="margin-top:16px">
+    <div class="f"><label>Цэцэрлэгийн эрхлэгч:</label><input></div>
+    <div class="f s"><label>Тамга</label><input></div>
+  </div>
+</section>
+
+</body>
+</html>
