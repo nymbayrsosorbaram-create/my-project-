@@ -79,7 +79,19 @@
     table { font-size: 11px; }
   }
   @media print {
-    body { background: #fff; }
+    body { background: #fff; font-size: 11.5px; line-height: 1.35; }
+    h1 { font-size: 17px; }
+    .sub { margin-bottom: 8px; }
+    h2 { font-size: 12.5px; margin: 10px 0 5px; }
+    h3 { font-size: 12px; margin: 7px 0 4px; }
+    .row, .checks { margin: 3px 0; }
+    td { height: 19px; }
+    .tall td { height: 38px; }
+    textarea { min-height: 44px; }
+    .sign { margin-top: 10px; }
+    .extra { display: none; }
+    .page:first-of-type td { height: 17px; }
+    .page:first-of-type th, .page:first-of-type td { padding: 2px 4px; }
     .toolbar { display: none; }
     .page { box-shadow: none; margin: 0; padding: 0; max-width: none; page-break-after: always; }
     .page:last-child { page-break-after: auto; }
@@ -87,7 +99,7 @@
     h2 { break-after: avoid; }
     table, .sign { break-inside: avoid; }
   }
-  @page { size: A4; margin: 15mm; }
+  @page { size: A4; margin: 12mm 14mm; }
 </style>
 </head>
 <body>
@@ -133,7 +145,7 @@
   <div class="row">
     <div class="f w"><label>Оршин суугаа хаяг (дүүрэг, хороо, байр/гудамж, тоот):</label><input></div>
   </div>
-  <div class="row"><div class="f w"><label></label><input></div></div>
+  <div class="row extra"><div class="f w"><label></label><input></div></div>
   <div class="row">
     <div class="f"><label>Гэрийн утас:</label><input></div>
     <div class="f"><label>Хүүхдийн эх хэл:</label><input></div>
