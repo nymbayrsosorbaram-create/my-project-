@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бүтээлийн дүгнэлт</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🎨</span>
+      <div>
+        <h1>Хүүхдийн бүтээлийн дүгнэлт</h1>
+        <small id="schoolLabel">СӨБ · Дүрслэх урлаг</small>
+      </div>
+    </div>
+    <label class="group-pick">
+      <span>Бүлэг:</span>
+      <select id="activeGroup"></select>
+    </label>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button data-tab="write" class="active">✏️ Дүгнэлт бичих</button>
+    <button data-tab="records">🗂 Бүтээлийн сан</button>
+    <button data-tab="groups">👥 Бүлэг, хүүхэд</button>
+    <button data-tab="bank">📚 Үгийн сан</button>
+    <button data-tab="reference">📖 Хөтөлбөр, арга зүй</button>
+    <button data-tab="backup">💾 Нөөцлөх</button>
+  </nav>
+
+  <main>
+    <!-- ДҮГНЭЛТ БИЧИХ -->
+    <section id="tab-write" class="tab active">
+      <div class="notice" id="noGroupNotice" hidden>
+        Эхлээд <b>👥 Бүлэг, хүүхэд</b> цэснээс бүлгээ үүсгэнэ үү.
+        <button class="btn small" data-goto="groups">Бүлэг үүсгэх</button>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h2>1. Хүүхэд, бүтээлийн мэдээлэл <span id="editBadge" class="badge" hidden>Засварлаж байна</span></h2>
+          <div class="form-grid">
+            <label>Хүүхдийн нэр
+              <input id="fChild" list="childList" autocomplete="off" placeholder="Нэрээ бичих эсвэл сонгох">
+              <datalist id="childList"></datalist>
+            </label>
+            <label>Нас
+              <input id="fAge" placeholder="ж: 4 нас 6 сар">
+            </label>
+            <label>Огноо
+              <input id="fDate" type="date">
+            </label>
+            <label>Үйл ажиллагааны төрөл
+              <select id="fActivity"></select>
+            </label>
+            <label class="span2">Сэдэв
+              <input id="fTopic" placeholder="ж: Намрын навч">
+            </label>
+            <label class="span2">Багш
+              <input id="fTeacher" placeholder="Багшийн нэр">
+            </label>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>2. Бүтээлийн зураг</h2>
+          <div class="dropzone" id="dropzone">
+            <p>Зургаа энд чирж оруулах эсвэл</p>
+            <div class="row center">
+              <label class="btn">🖼 Зураг сонгох
+                <input type="file" id="fileInput" accept="image/*" multiple hidden>
+              </label>
+              <label class="btn">📷 Камераар авах
+                <input type="file" id="camInput" accept="image/*" capture="environment" hidden>
+              </label>
+            </div>
+          </div>
+          <div class="thumbs" id="thumbs"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>3. Үнэлгээний шалгуур <small id="critHint"></small></h2>
+        <div class="row wrap gap">
+          <span class="muted">Бүгдийг:</span>
+          <button class="btn small lv3" data-setall="3">Ахисан</button>
+          <button class="btn small lv2" data-setall="2">Хангалттай</button>
+          <button class="btn small lv1" data-setall="1">Дэмжлэг</button>
+          <button class="btn small ghost" data-setall="0">Цэвэрлэх</button>
+        </div>
+        <div id="criteria" class="criteria"></div>
+      </div>
+
+      <div class="card">
+        <h2>4. Дүгнэлт</h2>
+        <div class="row wrap gap">
+          <button class="btn primary" id="btnGenerate">⚡ Дүгнэлт автоматаар үүсгэх</button>
+          <label class="check"><input type="checkbox" id="optAdvice" checked> Зөвлөмж оруулах</label>
+          <label class="check"><input type="checkbox" id="optParents"> Эцэг эхэд зөвлөмж</label>
+        </div>
+        <textarea id="fConclusion" rows="10" placeholder="Дүгнэлт энд гарна. Доорх бэлэн үгсээс дарж нэмэх боломжтой."></textarea>
+        <div id="chips" class="chips"></div>
+      </div>
+
+      <div class="actions sticky">
+        <button class="btn primary" id="btnSave">💾 Хадгалах</button>
+        <button class="btn" id="btnWordOne">📄 Word татах</button>
+        <button class="btn" id="btnPrintOne">🖨 Зурагтай хэвлэх</button>
+        <button class="btn ghost" id="btnNew">➕ Шинэ</button>
+      </div>
+    </section>
+
+    <!-- БҮТЭЭЛИЙН САН -->
+    <section id="tab-records" class="tab">
+      <div class="card">
+        <div class="row wrap gap">
+          <input id="rSearch" placeholder="🔍 Нэр, сэдвээр хайх">
+          <select id="rActivity"></select>
+          <input id="rFrom" type="date" title="Эхлэх огноо">
+          <input id="rTo" type="date" title="Дуусах огноо">
+          <label class="check"><input type="checkbox" id="rAllGroups"> Бүх бүлэг</label>
+        </div>
+        <div class="row wrap gap mt">
+          <label class="check"><input type="checkbox" id="rSelectAll"> Бүгдийг сонгох</label>
+          <span class="muted" id="rCount"></span>
+          <span class="spacer"></span>
+          <button class="btn" id="btnWordSel">📄 Сонгосныг Word</button>
+          <button class="btn" id="btnPrintSel">🖨 Сонгосныг хэвлэх</button>
+          <button class="btn danger" id="btnDelSel">🗑 Устгах</button>
+        </div>
+      </div>
+      <div id="recordList" class="record-list"></div>
+    </section>
+
+    <!-- БҮЛЭГ, ХҮҮХЭД -->
+    <section id="tab-groups" class="tab">
+      <div class="grid2">
+        <div class="card">
+          <h2>Ерөнхий мэдээлэл</h2>
+          <div class="form-grid">
+            <label class="span2">Цэцэрлэгийн нэр
+              <input id="sSchool" placeholder="ж: 100-р цэцэрлэг">
+            </label>
+            <label class="span2">Багшийн нэр (анхдагч)
+              <input id="sTeacher">
+            </label>
+            <label class="span2">Хичээлийн жил
+              <input id="sYear" placeholder="2026–2027">
+            </label>
+          </div>
+          <button class="btn primary" id="btnSaveSettings">Хадгалах</button>
+        </div>
+        <div class="card">
+          <h2 id="gFormTitle">Бүлэг нэмэх</h2>
+          <div class="form-grid">
+            <label>Бүлгийн нэр
+              <input id="gName" placeholder="ж: Ахлах-2 бүлэг">
+            </label>
+            <label>Насны ангилал
+              <select id="gAge"></select>
+            </label>
+            <label class="span2">Багш
+              <input id="gTeacher">
+            </label>
+            <label class="span2">Хүүхдийн нэрс (мөр бүрт нэг нэр)
+              <textarea id="gChildren" rows="8" placeholder="Тэмүүлэн&#10;Анужин&#10;..."></textarea>
+            </label>
+          </div>
+          <div class="row gap">
+            <button class="btn primary" id="btnSaveGroup">Хадгалах</button>
+            <button class="btn ghost" id="btnCancelGroup" hidden>Болих</button>
+          </div>
+        </div>
+      </div>
+      <div id="groupList" class="group-list"></div>
+    </section>
+
+    <!-- ҮГИЙН САН -->
+    <section id="tab-bank" class="tab">
+      <div class="card">
+        <p class="muted">Энд дүгнэлтэд ашиглагдах бэлэн өгүүлбэрүүдийг засна. <code>{name}</code> гэсэн хэсэгт хүүхдийн нэр орно.
+          Гарын авлага, хөтөлбөрийнхөө яг бичвэрийг энд хуулж тавьж болно.</p>
+        <div class="row wrap gap">
+          <label>Шалгуур <select id="bCrit"></select></label>
+          <label id="bVarWrap">Бүлэг <select id="bVar"></select></label>
+          <button class="btn small" id="btnAddCrit">➕ Шалгуур нэмэх</button>
+          <button class="btn small danger" id="btnDelCrit">Шалгуур устгах</button>
+        </div>
+        <div class="form-grid mt">
+          <label>Шалгуурын нэр <input id="bName"></label>
+          <label>Хөгжлийн чиглэл <select id="bDomain"></select></label>
+          <label class="check span2"><input type="checkbox" id="bEnabled"> Үнэлгээнд ашиглах</label>
+          <label class="span2" id="bExpectWrap">Хүлээгдэж буй үр дүн (энэ бүлэгт)
+            <textarea id="bExpect" rows="2"></textarea></label>
+          <label class="span2"><span class="lvtag lv3">Ахисан</span><textarea id="bP3" rows="2"></textarea></label>
+          <label class="span2"><span class="lvtag lv2">Хангалттай</span><textarea id="bP2" rows="2"></textarea></label>
+          <label class="span2"><span class="lvtag lv1">Дэмжлэг шаардлагатай</span><textarea id="bP1" rows="2"></textarea></label>
+          <label class="span2">Зөвлөмж (дэмжлэг шаардлагатай үед)
+            <textarea id="bAdvice" rows="2"></textarea></label>
+        </div>
+        <button class="btn primary" id="btnSaveCrit">Шалгуур хадгалах</button>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <h2>Нэгтгэсэн дүгнэлтийн өгүүлбэр</h2>
+          <div class="form-grid">
+            <label class="span2"><span class="lvtag lv3">Ахисан</span><textarea id="sum3" rows="2"></textarea></label>
+            <label class="span2"><span class="lvtag lv2">Хангалттай</span><textarea id="sum2" rows="2"></textarea></label>
+            <label class="span2"><span class="lvtag lv1">Дэмжлэг</span><textarea id="sum1" rows="2"></textarea></label>
+            <label class="span2">Давуу тал (<code>{list}</code> = чиглэлүүд)<textarea id="sumStr" rows="2"></textarea></label>
+            <label class="span2">Бүгд ахисан үеийн зөвлөмж<textarea id="sumAll" rows="2"></textarea></label>
+          </div>
+          <button class="btn primary" id="btnSaveSummary">Хадгалах</button>
+        </div>
+        <div class="card">
+          <h2>Бэлэн үгс (товч хэллэг)</h2>
+          <label>Ангилал <select id="chipCat"></select></label>
+          <textarea id="chipText" rows="9" placeholder="Мөр бүрт нэг хэллэг"></textarea>
+          <div class="row gap wrap">
+            <button class="btn primary" id="btnSaveChips">Хадгалах</button>
+            <button class="btn small" id="btnAddChipCat">➕ Ангилал нэмэх</button>
+          </div>
+        </div>
+      </div>
+      <div class="card row wrap gap">
+        <button class="btn" id="btnExportBank">⬇ Үгийн сан татах (JSON)</button>
+        <label class="btn">⬆ Үгийн сан оруулах<input type="file" id="importBank" accept=".json,application/json" hidden></label>
+        <button class="btn danger" id="btnResetBank">Анхны байдалд оруулах</button>
+      </div>
+    </section>
+
+    <!-- ХӨТӨЛБӨР, АРГА ЗҮЙ -->
+    <section id="tab-reference" class="tab">
+      <div class="card">
+        <h2>Насны бүлэг тус бүрийн хүлээгдэж буй үр дүн (Дүрслэх урлаг)</h2>
+        <div id="expectTable" class="table-wrap"></div>
+      </div>
+      <div class="card">
+        <h2>Хөтөлбөр, үнэлгээний арга зүйн тэмдэглэл</h2>
+        <p class="muted">Гарын авлагаасаа хэрэгтэй хэсгийг энд хуулж хадгалж болно.</p>
+        <textarea id="refText" rows="22"></textarea>
+        <button class="btn primary" id="btnSaveRef">Хадгалах</button>
+      </div>
+    </section>
+
+    <!-- НӨӨЦЛӨХ -->
+    <section id="tab-backup" class="tab">
+      <div class="grid2">
+        <div class="card">
+          <h2>Нөөц хуулбар авах</h2>
+          <p>Бүх бүтээл (зурагтай), бүлэг, үгийн санг нэг файлд хадгална. Флаш, имэйл, Google Drive-д хадгалж байгаарай.</p>
+          <p class="muted" id="lastBackup"></p>
+          <button class="btn primary" id="btnBackup">⬇ Нөөц файл татах</button>
+        </div>
+        <div class="card">
+          <h2>Нөөцөөс сэргээх</h2>
+          <p>Өмнө нь татсан нөөц файлаа сонгоно. Байгаа өгөгдөл устахгүй, нэгтгэгдэнэ.</p>
+          <label class="btn">⬆ Нөөц файл сонгох<input type="file" id="importBackup" accept=".json,application/json" hidden></label>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Бүлгийн нэгдсэн Word тайлан</h2>
+        <p>Сонгосон бүлгийн бүх бүтээлийн дүгнэлтийг зурагтай нь нэг Word файлд гаргана.</p>
+        <button class="btn" id="btnWordGroup">📄 Бүлгийн тайлан татах</button>
+      </div>
+      <div class="card">
+        <h2>Хадгалах сан</h2>
+        <p id="storageInfo" class="muted"></p>
+        <button class="btn danger" id="btnWipe">Бүх өгөгдлийг устгах</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Хэвлэх хэсэг -->
+<div id="printArea"></div>
+<div id="toast"></div>
+
+<script src="vendor/docx.iife.js"></script>
+<script src="js/data.js"></script>
+<script src="js/db.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
