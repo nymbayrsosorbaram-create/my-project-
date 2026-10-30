@@ -534,7 +534,7 @@
 
   /* ---------- Бүлэг ---------- */
   function renderGroups() {
-    $("gAge").innerHTML = AGE_KEYS.map(k => `<option value="${k}">${AGE_GROUPS[k].name} (${AGE_GROUPS[k].age})</option>`).join("");
+    if (!$("gAge").options.length) $("gAge").innerHTML = AGE_KEYS.map(k => `<option value="${k}">${AGE_GROUPS[k].name} (${AGE_GROUPS[k].age})</option>`).join("");
     $("sSchool").value = state.settings.school || "";
     $("sTeacher").value = state.settings.teacher || "";
     $("sYear").value = state.settings.year || "";
