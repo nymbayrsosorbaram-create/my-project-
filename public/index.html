@@ -8,37 +8,53 @@
 </head>
 <body>
   <header class="topbar">
-    <h1>🎨 Хүүхдийн бүтээл</h1>
+    <div>
+      <h1>🎨 Хүүхдийн бүтээл</h1>
+      <p class="subtitle">СӨБ сургалтын хөтөлбөр · Зураг, урлал</p>
+    </div>
     <button id="openUpload" class="btn primary">+ Бүтээл оруулах</button>
   </header>
 
   <main>
     <section class="filters">
       <input id="search" type="search" placeholder="Бүтээл эсвэл хүүхдийн нэрээр хайх...">
-      <select id="childFilter">
-        <option value="">Бүх хүүхэд</option>
-      </select>
+      <select id="childFilter"><option value="">Бүх хүүхэд</option></select>
+      <select id="levelFilter"><option value="">Бүх түвшин</option></select>
     </section>
 
     <section id="childSummary" class="summary"></section>
     <section id="gallery" class="gallery"></section>
-    <p id="empty" class="empty" hidden>Одоогоор бүтээл алга. "Бүтээл оруулах" товчийг дарж эхлээрэй.</p>
+    <p id="empty" class="empty" hidden>Бүтээл олдсонгүй. "Бүтээл оруулах" товчийг дарж эхлээрэй.</p>
   </main>
 
-  <!-- Бүтээл оруулах цонх -->
-  <dialog id="uploadDialog">
+  <!-- Бүтээл оруулах -->
+  <dialog id="uploadDialog" class="medium">
     <form id="uploadForm" class="form">
       <h2>Шинэ бүтээл оруулах</h2>
       <label class="drop" id="dropZone">
-        <input type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif" required hidden>
+        <input type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
         <img id="preview" alt="" hidden>
         <span id="dropText">Зураг сонгох эсвэл энд чирж оруулах<br><small>JPG, PNG, WEBP, GIF · 10MB хүртэл</small></span>
       </label>
-      <label>Хүүхдийн нэр *<input name="child_name" list="childNames" required maxlength="80"></label>
+      <div class="two-col">
+        <label>Хүүхдийн нэр *<input name="child_name" list="childNames" required maxlength="80"></label>
+        <label>Нас / бүлэг<input name="age_group" placeholder="жишээ: 4 нас, Дунд бүлэг" maxlength="40"></label>
+      </div>
       <datalist id="childNames"></datalist>
-      <label>Нас / бүлэг<input name="age_group" placeholder="жишээ: 5 нас, Дунд бүлэг" maxlength="40"></label>
       <label>Бүтээлийн нэр *<input name="title" required maxlength="120"></label>
-      <label>Тайлбар<textarea name="description" rows="2" maxlength="1000"></textarea></label>
+      <label>Бүтээлийн санаа (хүүхдийн өөрийнх нь тайлбар)
+        <textarea name="description" rows="2" maxlength="1000" placeholder="Хүүхэд бүтээлийнхээ тухай юу гэж ярьсан бэ?"></textarea>
+      </label>
+
+      <fieldset>
+        <legend>Хөтөлбөрийн түвшин *</legend>
+        <div id="levelChoices" class="segmented"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Холбогдох суралцахуйн үр дүн * <small class="meta">(дор хаяж нэг)</small></legend>
+        <div id="outcomeChoices" class="outcome-choices"></div>
+      </fieldset>
+
       <p class="error" id="uploadError"></p>
       <div class="actions">
         <button type="button" class="btn" data-close>Болих</button>
@@ -55,15 +71,24 @@
         <button class="close" data-close aria-label="Хаах">×</button>
         <h2 id="workTitle"></h2>
         <p class="meta" id="workMeta"></p>
-        <p id="workDesc"></p>
+        <blockquote id="workDesc"></blockquote>
 
-        <div id="workAverages" class="averages"></div>
+        <h3>Суралцахуйн үр дүн</h3>
+        <ul id="workOutcomes" class="outcome-status"></ul>
 
         <h3>Дүгнэлт өгөх</h3>
         <form id="evalForm" class="form">
-          <div id="criteria"></div>
-          <label>Сайн тал<textarea name="strengths" rows="2" placeholder="Юу нь онцгой сайн болсон бэ?"></textarea></label>
-          <label>Зөвлөмж<textarea name="suggestions" rows="2" placeholder="Цаашид юуг сайжруулж болох вэ?"></textarea></label>
+          <div class="two-col">
+            <label>Үнэлгээний төрөл<select name="type" id="evalType"></select></label>
+            <label>Арга, хэрэгсэл<select name="method" id="evalMethod"></select></label>
+          </div>
+          <div id="evalOutcomes" class="rating-list"></div>
+          <details>
+            <summary>Үнэлгээний шалгуур (мэдлэг, чадвар, төлөвшил) — ажигласан бол тэмдэглэнэ</summary>
+            <div id="evalCriteria" class="rating-list"></div>
+          </details>
+          <label>Ахиц, давуу тал<textarea name="strengths" rows="2" placeholder="Юу хийж чадаж байна вэ? Юугаараа ахисан бэ?"></textarea></label>
+          <label>Дараагийн алхам, дэмжлэг<textarea name="next_steps" rows="2" placeholder="Цаашид ямар үйл ажиллагаагаар дэмжих вэ?"></textarea></label>
           <label>Дүгнэсэн хүн<input name="evaluator" placeholder="Багш / эцэг эх" maxlength="80"></label>
           <p class="error" id="evalError"></p>
           <div class="actions">
@@ -75,6 +100,22 @@
         <h3>Өмнөх дүгнэлтүүд</h3>
         <ul id="evalList" class="eval-list"></ul>
       </div>
+    </div>
+  </dialog>
+
+  <!-- Хүүхдийн хувийн хавтас -->
+  <dialog id="portfolioDialog" class="wide">
+    <div class="portfolio">
+      <button class="close no-print" data-close aria-label="Хаах">×</button>
+      <h2 id="pfTitle"></h2>
+      <p class="meta">Зураг, урлал сургалтын чиглэлийн суралцахуйн үр дүн тус бүрийн сүүлийн дүгнэлт.
+        <button class="btn small no-print" id="printPortfolio">🖨 Хэвлэх</button></p>
+      <div class="legend" id="pfLegend"></div>
+      <div class="table-wrap"><table id="pfOutcomes" class="pf-grid"></table></div>
+      <h3>Үнэлгээний шалгуур</h3>
+      <div class="table-wrap"><table id="pfCriteria" class="pf-criteria"></table></div>
+      <h3>Бүтээлүүд</h3>
+      <div id="pfWorks" class="pf-works"></div>
     </div>
   </dialog>
 

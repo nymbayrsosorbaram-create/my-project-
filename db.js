@@ -14,22 +14,37 @@ function openDb(file) {
       image_file  TEXT NOT NULL,
       created_at  TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
     );
+  `);
 
-    CREATE TABLE IF NOT EXISTS evaluations (
+  // Анхны хувилбарын works хүснэгтэд хөтөлбөрийн талбарууд нэмэх
+  const columns = db.prepare('PRAGMA table_info(works)').all().map((c) => c.name);
+  if (!columns.includes('level')) db.exec('ALTER TABLE works ADD COLUMN level INTEGER NOT NULL DEFAULT 1');
+  if (!columns.includes('outcomes')) db.exec(`ALTER TABLE works ADD COLUMN outcomes TEXT NOT NULL DEFAULT '[]'`);
+
+  db.exec(`
+    -- Нэг удаагийн дүгнэлт (гарааны / явцын / үр дүнгийн)
+    CREATE TABLE IF NOT EXISTS assessments (
       id          INTEGER PRIMARY KEY AUTOINCREMENT,
       work_id     INTEGER NOT NULL REFERENCES works(id) ON DELETE CASCADE,
+      type        TEXT NOT NULL CHECK (type IN ('initial', 'formative', 'summative')),
+      method      TEXT NOT NULL DEFAULT '',
       evaluator   TEXT NOT NULL,
-      creativity  INTEGER NOT NULL CHECK (creativity BETWEEN 1 AND 5),
-      color       INTEGER NOT NULL CHECK (color BETWEEN 1 AND 5),
-      technique   INTEGER NOT NULL CHECK (technique BETWEEN 1 AND 5),
-      effort      INTEGER NOT NULL CHECK (effort BETWEEN 1 AND 5),
       strengths   TEXT NOT NULL DEFAULT '',
-      suggestions TEXT NOT NULL DEFAULT '',
+      next_steps  TEXT NOT NULL DEFAULT '',
       created_at  TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
     );
 
+    -- Суралцахуйн үр дүн (ЗУ...) эсвэл үнэлгээний шалгуур (K1, S1, A1...) тус бүрийн ахиц
+    CREATE TABLE IF NOT EXISTS assessment_scores (
+      assessment_id INTEGER NOT NULL REFERENCES assessments(id) ON DELETE CASCADE,
+      kind          TEXT NOT NULL CHECK (kind IN ('outcome', 'criterion')),
+      code          TEXT NOT NULL,
+      rating        INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 3),
+      PRIMARY KEY (assessment_id, kind, code)
+    );
+
     CREATE INDEX IF NOT EXISTS idx_works_child ON works(child_name);
-    CREATE INDEX IF NOT EXISTS idx_evaluations_work ON evaluations(work_id);
+    CREATE INDEX IF NOT EXISTS idx_assessments_work ON assessments(work_id);
   `);
   return db;
 }
