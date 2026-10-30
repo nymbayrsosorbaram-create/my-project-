@@ -33,8 +33,9 @@
 
   <nav class="tabs" id="tabs">
     <button data-tab="write" class="active">✏️ Дүгнэлт бичих</button>
+    <button data-tab="children">🧒 Хувийн хавтас</button>
     <button data-tab="records">🗂 Бүтээлийн сан</button>
-    <button data-tab="groups">👥 Бүлэг, хүүхэд</button>
+    <button data-tab="groups">👥 Бүлэг</button>
     <button data-tab="bank">📚 Үгийн сан</button>
     <button data-tab="reference">📖 Хөтөлбөр, арга зүй</button>
     <button data-tab="backup">💾 Нөөцлөх</button>
@@ -44,7 +45,7 @@
     <!-- ДҮГНЭЛТ БИЧИХ -->
     <section id="tab-write" class="tab active">
       <div class="notice" id="noGroupNotice" hidden>
-        Эхлээд <b>👥 Бүлэг, хүүхэд</b> цэснээс бүлгээ үүсгэнэ үү.
+        Эхлээд <b>👥 Бүлэг</b> цэснээс бүлгээ үүсгэнэ үү.
         <button class="btn small" data-goto="groups">Бүлэг үүсгэх</button>
       </div>
       <div class="grid2">
@@ -55,7 +56,7 @@
               <input id="fChild" list="childList" autocomplete="off" placeholder="Нэрээ бичих эсвэл сонгох">
               <datalist id="childList"></datalist>
             </label>
-            <label>Нас
+            <label>Нас (он, сар)
               <input id="fAge" placeholder="ж: 4 нас 6 сар">
             </label>
             <label>Огноо
@@ -66,6 +67,12 @@
             </label>
             <label class="span2">Сэдэв
               <input id="fTopic" placeholder="ж: Намрын навч">
+            </label>
+            <label>Үнэлгээний төрөл
+              <select id="fAssess"></select>
+            </label>
+            <label>Хөтөлбөрийн түвшин
+              <select id="fLevel"></select>
             </label>
             <label class="span2">Багш
               <input id="fTeacher" placeholder="Багшийн нэр">
@@ -94,12 +101,13 @@
         <h2>3. Үнэлгээний шалгуур <small id="critHint"></small></h2>
         <div class="row wrap gap">
           <span class="muted">Бүгдийг:</span>
-          <button class="btn small lv3" data-setall="3">Ахисан</button>
-          <button class="btn small lv2" data-setall="2">Хангалттай</button>
-          <button class="btn small lv1" data-setall="1">Дэмжлэг</button>
+          <button class="btn small lv3" data-setall="3">Хангасан</button>
+          <button class="btn small lv2" data-setall="2">Хэсэгчлэн</button>
+          <button class="btn small lv1" data-setall="1">Хангаагүй</button>
           <button class="btn small ghost" data-setall="0">Цэвэрлэх</button>
         </div>
         <div id="criteria" class="criteria"></div>
+        <div id="resultBox" class="result-box" hidden></div>
       </div>
 
       <div class="card">
@@ -118,6 +126,19 @@
         <button class="btn" id="btnWordOne">📄 Word татах</button>
         <button class="btn" id="btnPrintOne">🖨 Зурагтай хэвлэх</button>
         <button class="btn ghost" id="btnNew">➕ Шинэ</button>
+      </div>
+    </section>
+
+    <!-- ХУВИЙН ХАВТАС -->
+    <section id="tab-children" class="tab">
+      <div class="kids-layout">
+        <div class="card kids-side">
+          <h2>Хүүхдүүд <small id="kidCount"></small></h2>
+          <input id="kSearch" placeholder="🔍 Нэрээр хайх">
+          <div id="kidList" class="kid-list"></div>
+          <button class="btn" id="btnAddKid">➕ Хүүхэд нэмэх</button>
+        </div>
+        <div id="kidDetail" class="kid-detail"></div>
       </div>
     </section>
 
@@ -173,7 +194,7 @@
             <label class="span2">Багш
               <input id="gTeacher">
             </label>
-            <label class="span2">Хүүхдийн нэрс (мөр бүрт нэг нэр)
+            <label class="span2">Хүүхдийн нэрс (мөр бүрт нэг нэр). Шинэ нэр бүрт хувийн хавтас үүснэ.
               <textarea id="gChildren" rows="8" placeholder="Тэмүүлэн&#10;Анужин&#10;..."></textarea>
             </label>
           </div>
@@ -200,13 +221,16 @@
         <div class="form-grid mt">
           <label>Шалгуурын нэр <input id="bName"></label>
           <label>Хөгжлийн чиглэл <select id="bDomain"></select></label>
+          <label class="span2">Чадамж <select id="bComp"></select></label>
           <label class="check span2"><input type="checkbox" id="bEnabled"> Үнэлгээнд ашиглах</label>
-          <label class="span2" id="bExpectWrap">Хүлээгдэж буй үр дүн (энэ бүлэгт)
+          <label class="span2" id="bExpectWrap">Хөтөлбөрийн суралцахуйн үр дүн (энэ түвшинд)
             <textarea id="bExpect" rows="2"></textarea></label>
-          <label class="span2"><span class="lvtag lv3">Ахисан</span><textarea id="bP3" rows="2"></textarea></label>
-          <label class="span2"><span class="lvtag lv2">Хангалттай</span><textarea id="bP2" rows="2"></textarea></label>
-          <label class="span2"><span class="lvtag lv1">Дэмжлэг шаардлагатай</span><textarea id="bP1" rows="2"></textarea></label>
-          <label class="span2">Зөвлөмж (дэмжлэг шаардлагатай үед)
+          <label class="span2">Үнэлгээний хуудасны шалгуур (гарын авлага, энэ насанд)
+            <textarea id="bSheet" rows="2"></textarea></label>
+          <label class="span2"><span class="lvtag lv3" id="bL3">Хангасан</span><textarea id="bP3" rows="2"></textarea></label>
+          <label class="span2"><span class="lvtag lv2" id="bL2">Хэсэгчлэн хангасан</span><textarea id="bP2" rows="2"></textarea></label>
+          <label class="span2"><span class="lvtag lv1" id="bL1">Хангаагүй</span><textarea id="bP1" rows="2"></textarea></label>
+          <label class="span2">Зөвлөмж (хангаагүй үед)
             <textarea id="bAdvice" rows="2"></textarea></label>
         </div>
         <button class="btn primary" id="btnSaveCrit">Шалгуур хадгалах</button>
@@ -215,10 +239,11 @@
       <div class="grid2">
         <div class="card">
           <h2>Нэгтгэсэн дүгнэлтийн өгүүлбэр</h2>
+          <p class="muted small"><code>{pct}</code> = шалгуур хангасан хувь</p>
           <div class="form-grid">
-            <label class="span2"><span class="lvtag lv3">Ахисан</span><textarea id="sum3" rows="2"></textarea></label>
-            <label class="span2"><span class="lvtag lv2">Хангалттай</span><textarea id="sum2" rows="2"></textarea></label>
-            <label class="span2"><span class="lvtag lv1">Дэмжлэг</span><textarea id="sum1" rows="2"></textarea></label>
+            <label class="span2"><span class="lvtag lv3">Хангалттай (65%↑) · Ерөнхий дэмжлэг</span><textarea id="sum3" rows="2"></textarea></label>
+            <label class="span2"><span class="lvtag lv2">Дундаж (36–64%) · Нэмэлт дэмжлэг</span><textarea id="sum2" rows="2"></textarea></label>
+            <label class="span2"><span class="lvtag lv1">Дунджаас доогуур (35%↓) · Тусгай дэмжлэг</span><textarea id="sum1" rows="2"></textarea></label>
             <label class="span2">Давуу тал (<code>{list}</code> = чиглэлүүд)<textarea id="sumStr" rows="2"></textarea></label>
             <label class="span2">Бүгд ахисан үеийн зөвлөмж<textarea id="sumAll" rows="2"></textarea></label>
           </div>
@@ -244,7 +269,8 @@
     <!-- ХӨТӨЛБӨР, АРГА ЗҮЙ -->
     <section id="tab-reference" class="tab">
       <div class="card">
-        <h2>Насны бүлэг тус бүрийн хүлээгдэж буй үр дүн (Дүрслэх урлаг)</h2>
+        <h2>Зураг, урлал: суралцахуйн үр дүн ба үнэлгээний хуудасны шалгуур</h2>
+        <p class="muted small">Хөтөлбөр (2025) · 10.6 Зураг, урлал — I–IV түвшин. Саарал бичвэр нь «Хүүхдийн хөгжлийн үнэлгээний арга зүй» гарын авлагын нас тус бүрийн үнэлгээний хуудасны шалгуур.</p>
         <div id="expectTable" class="table-wrap"></div>
       </div>
       <div class="card">
