@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Хүүхдийн бүтээл</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>🎨 Хүүхдийн бүтээл</h1>
+    <button id="openUpload" class="btn primary">+ Бүтээл оруулах</button>
+  </header>
+
+  <main>
+    <section class="filters">
+      <input id="search" type="search" placeholder="Бүтээл эсвэл хүүхдийн нэрээр хайх...">
+      <select id="childFilter">
+        <option value="">Бүх хүүхэд</option>
+      </select>
+    </section>
+
+    <section id="childSummary" class="summary"></section>
+    <section id="gallery" class="gallery"></section>
+    <p id="empty" class="empty" hidden>Одоогоор бүтээл алга. "Бүтээл оруулах" товчийг дарж эхлээрэй.</p>
+  </main>
+
+  <!-- Бүтээл оруулах цонх -->
+  <dialog id="uploadDialog">
+    <form id="uploadForm" class="form">
+      <h2>Шинэ бүтээл оруулах</h2>
+      <label class="drop" id="dropZone">
+        <input type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif" required hidden>
+        <img id="preview" alt="" hidden>
+        <span id="dropText">Зураг сонгох эсвэл энд чирж оруулах<br><small>JPG, PNG, WEBP, GIF · 10MB хүртэл</small></span>
+      </label>
+      <label>Хүүхдийн нэр *<input name="child_name" list="childNames" required maxlength="80"></label>
+      <datalist id="childNames"></datalist>
+      <label>Нас / бүлэг<input name="age_group" placeholder="жишээ: 5 нас, Дунд бүлэг" maxlength="40"></label>
+      <label>Бүтээлийн нэр *<input name="title" required maxlength="120"></label>
+      <label>Тайлбар<textarea name="description" rows="2" maxlength="1000"></textarea></label>
+      <p class="error" id="uploadError"></p>
+      <div class="actions">
+        <button type="button" class="btn" data-close>Болих</button>
+        <button type="submit" class="btn primary">Хадгалах</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Бүтээлийн дэлгэрэнгүй, дүгнэлт -->
+  <dialog id="workDialog" class="wide">
+    <div class="work-detail">
+      <div class="work-image"><img id="workImage" alt=""></div>
+      <div class="work-info">
+        <button class="close" data-close aria-label="Хаах">×</button>
+        <h2 id="workTitle"></h2>
+        <p class="meta" id="workMeta"></p>
+        <p id="workDesc"></p>
+
+        <div id="workAverages" class="averages"></div>
+
+        <h3>Дүгнэлт өгөх</h3>
+        <form id="evalForm" class="form">
+          <div id="criteria"></div>
+          <label>Сайн тал<textarea name="strengths" rows="2" placeholder="Юу нь онцгой сайн болсон бэ?"></textarea></label>
+          <label>Зөвлөмж<textarea name="suggestions" rows="2" placeholder="Цаашид юуг сайжруулж болох вэ?"></textarea></label>
+          <label>Дүгнэсэн хүн<input name="evaluator" placeholder="Багш / эцэг эх" maxlength="80"></label>
+          <p class="error" id="evalError"></p>
+          <div class="actions">
+            <button type="button" class="btn danger" id="deleteWork">Бүтээл устгах</button>
+            <button type="submit" class="btn primary">Дүгнэлт хадгалах</button>
+          </div>
+        </form>
+
+        <h3>Өмнөх дүгнэлтүүд</h3>
+        <ul id="evalList" class="eval-list"></ul>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

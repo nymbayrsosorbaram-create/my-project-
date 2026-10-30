@@ -1,0 +1,19 @@
+{
+  "name": "huuhdiin-buteel",
+  "version": "1.0.0",
+  "description": "Хүүхдийн бүтээлийн зураг оруулж, дүгнэлт хийдэг систем",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node --no-warnings=ExperimentalWarning server.js",
+    "test": "node --no-warnings=ExperimentalWarning --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=22.5"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.3.0",
+    "multer": "^2.5.0"
+  }
+}
