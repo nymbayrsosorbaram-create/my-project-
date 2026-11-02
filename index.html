@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Бүтээлийн дүгнэлт</title>
+<title>Хүүхдийн хөгжлийн дүгнэлт</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&family=Nunito:wght@500;700;800;900&display=swap">
 <link rel="stylesheet" href="css/style.css">
@@ -21,8 +21,8 @@
     <div class="brand">
       <span class="logo" aria-hidden="true">🎨</span>
       <div>
-        <h1>Хүүхдийн бүтээлийн дүгнэлт</h1>
-        <small id="schoolLabel">СӨБ · Дүрслэх урлаг</small>
+        <h1>Хүүхдийн хөгжлийн дүгнэлт</h1>
+        <small id="schoolLabel">СӨБ · Сургалтын 7 чиглэл</small>
       </div>
     </div>
     <label class="group-pick">
@@ -50,8 +50,11 @@
       </div>
       <div class="grid2">
         <div class="card">
-          <h2>1. Хүүхэд, бүтээлийн мэдээлэл <span id="editBadge" class="badge" hidden>Засварлаж байна</span></h2>
+          <h2>1. Хүүхэд, үйл ажиллагааны мэдээлэл <span id="editBadge" class="badge" hidden>Засварлаж байна</span></h2>
           <div class="form-grid">
+            <label class="span2">Сургалтын чиглэл
+              <select id="fArea"></select>
+            </label>
             <label>Хүүхдийн нэр
               <input id="fChild" list="childList" autocomplete="off" placeholder="Нэрээ бичих эсвэл сонгох">
               <datalist id="childList"></datalist>
@@ -62,7 +65,7 @@
             <label>Огноо
               <input id="fDate" type="date">
             </label>
-            <label>Үйл ажиллагааны төрөл
+            <label id="fActivityWrap">Бүтээлийн төрөл
               <select id="fActivity"></select>
             </label>
             <label class="span2">Сэдэв
@@ -81,7 +84,7 @@
         </div>
 
         <div class="card">
-          <h2>2. Бүтээлийн зураг</h2>
+          <h2>2. Зураг, нотолгоо <small>бүтээл, үйл ажиллагааны зураг</small></h2>
           <div class="dropzone" id="dropzone">
             <p>Зургаа энд чирж оруулах эсвэл</p>
             <div class="row center">
@@ -269,8 +272,9 @@
     <!-- ХӨТӨЛБӨР, АРГА ЗҮЙ -->
     <section id="tab-reference" class="tab">
       <div class="card">
-        <h2>Зураг, урлал: суралцахуйн үр дүн ба үнэлгээний хуудасны шалгуур</h2>
-        <p class="muted small">Хөтөлбөр (2025) · 10.6 Зураг, урлал — I–IV түвшин. Саарал бичвэр нь «Хүүхдийн хөгжлийн үнэлгээний арга зүй» гарын авлагын нас тус бүрийн үнэлгээний хуудасны шалгуур.</p>
+        <h2>Сургалтын чиглэл: суралцахуйн үр дүн, үнэлгээний шалгуур</h2>
+        <label class="row gap">Чиглэл <select id="refArea"></select></label>
+        <p class="muted small">Сургуулийн өмнөх боловсролын сургалтын хөтөлбөр (2025) — I–IV түвшин.</p>
         <div id="expectTable" class="table-wrap"></div>
       </div>
       <div class="card">
@@ -298,7 +302,7 @@
       </div>
       <div class="card">
         <h2>Бүлгийн нэгдсэн Word тайлан</h2>
-        <p>Сонгосон бүлгийн бүх бүтээлийн дүгнэлтийг зурагтай нь нэг Word файлд гаргана.</p>
+        <p>Сонгосон бүлгийн бүх үнэлгээ, дүгнэлтийг зурагтай нь нэг Word файлд гаргана.</p>
         <button class="btn" id="btnWordGroup">📄 Бүлгийн тайлан татах</button>
       </div>
       <div class="card">
@@ -316,6 +320,7 @@
 
 <script src="vendor/docx.iife.js"></script>
 <script src="js/data.js"></script>
+<script src="js/program.js"></script>
 <script src="js/db.js"></script>
 <script src="js/app.js"></script>
 </body>

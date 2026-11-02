@@ -34,7 +34,37 @@
   const activeGroup = () => state.groups.find(g => g.id === state.activeGroupId) || null;
   const groupById = id => state.groups.find(g => g.id === id) || null;
   const enabledCriteria = () => state.bank.criteria.filter(c => c.enabled !== false);
-  const critsFor = act => enabledCriteria().filter(c => !c.acts || !c.acts.length || c.acts.includes(act));
+  const artCrits = act => enabledCriteria().filter(c => !c.acts || !c.acts.length || c.acts.includes(act));
+
+  /* Хөтөлбөрийн сургалтын чиглэлүүд (Зураг, урлалаас бусад нь хөтөлбөрийн үр дүнгээр шууд үнэлэгдэнэ) */
+  const AREA_DOMAIN = { nsh: "niigem", hem: "bie", hel: "tanin", bno: "tanin", mat: "tanin", zu: "tanin", hog: "tanin" };
+  const AREA_ADVICE = {
+    nsh: "Хүүхэдтэй сэтгэл хөдлөлийн тухай ярилцаж, мэдрэмжээ нэрлэх, тайвшрах аргуудыг хамтдаа дадлагажуулах; бусадтай хамтран тоглох, ээлжлэх боломж олгох.",
+    hem: "Өдөр бүр гадаа идэвхтэй хөдөлгөөнт тоглоом тоглуулж, хувийн ариун цэвэр, зохистой хооллолт, аюулгүй байдлын дадлыг гэр бүлээрээ хамт хэвшүүлэх.",
+    hel: "Өдөр бүр ном уншиж өгч, үйл явдлын талаар асууж ярилцах; хүүхдийн яриаг тасалгүй сонсож, бүтэн өгүүлбэрээр ярихыг урамшуулах.",
+    bno: "Байгальд аялж ургамал, амьтныг хамтдаа ажиглах, гэрийн ургамал арчлах, гэр бүлийн уламжлал, өв соёлын тухай ярилцах.",
+    mat: "Өдөр тутмын үйлд (ширээ засах, хувцас эвхэх, дэлгүүр хэсэх) тоолох, харьцуулах, ангилах, дараалуулах тоглоом тоглуулах.",
+    zu: "",
+    hog: "Хамтдаа дуу сонсож, дуулж, алга ташин хэмнэл дагах; гэрийн эд зүйлсээр энгийн хөгжмийн зэмсэг хийж тоглох."
+  };
+  const areaById = id => PROGRAM_AREAS.find(a => a.id === (id || "zu"));
+  const areaName = id => (areaById(id) || {}).name || "";
+  const programCache = {};
+  function programCrits(areaId) {
+    if (programCache[areaId]) return programCache[areaId];
+    const a = areaById(areaId);
+    const list = [];
+    (a ? a.subareas : []).forEach((sub, si) => sub.items.forEach((it, ii) => {
+      const program = {};
+      for (const k of AGE_KEYS) if (it[k]) program[k] = `${it[k].code}. ${it[k].text}`;
+      list.push({ id: `${a.code}-${si}-${ii}`, name: sub.name, domain: AREA_DOMAIN[a.id], scale: a.id === "nsh" ? "social" : "skill", program, outcome: it, area: a.id });
+    }));
+    return (programCache[areaId] = list);
+  }
+  const critsFor = (act, area, lv) => (!area || area === "zu") ? artCrits(act) : programCrits(area).filter(c => c.program[lv || "ahlah"]);
+  const formCrits = () => critsFor($("fActivity").value, $("fArea").value, $("fLevel").value);
+  const actLabel = r => (r.area && r.area !== "zu") ? areaName(r.area) : `Зураг, урлал · ${ACTIVITIES[r.activity]?.name || ""}`;
+  const docTitle = r => (r.area && r.area !== "zu") ? "ХҮҮХДИЙН ХӨГЖЛИЙН ҮНЭЛГЭЭНИЙ ДҮГНЭЛТ" : "ХҮҮХДИЙН БҮТЭЭЛИЙН ДҮГНЭЛТ";
   const scaleOf = c => SCALES[c.scale] || SCALES.skill;
   const fill = (tpl, name) => String(tpl || "").replaceAll("{name}", name);
   const kidsOf = groupId => state.children.filter(k => k.groupId === groupId).sort((a, b) => a.name.localeCompare(b.name, "mn"));
@@ -157,7 +187,7 @@
       : `<option value="">— Бүлэг алга —</option>`;
     if (state.activeGroupId) sel.value = state.activeGroupId;
     $("noGroupNotice").hidden = state.groups.length > 0;
-    $("schoolLabel").textContent = [state.settings.school, state.settings.year].filter(Boolean).join(" · ") || "СӨБ · Зураг, урлал";
+    $("schoolLabel").textContent = [state.settings.school, state.settings.year].filter(Boolean).join(" · ") || "СӨБ · Сургалтын 7 чиглэл";
     renderChildList();
     syncLevelToGroup();
     renderCriteria();
@@ -184,8 +214,10 @@
   function renderCriteria() {
     const lv = $("fLevel").value || "ahlah";
     const ag = AGE_GROUPS[lv];
-    $("critHint").textContent = `· ${ag.level} (${ag.name}) · ${ACTIVITIES[$("fActivity").value]?.name || ""}`;
-    $("criteria").innerHTML = critsFor($("fActivity").value).map(c => {
+    const area = $("fArea").value || "zu";
+    $("fActivityWrap").hidden = area !== "zu";
+    $("critHint").textContent = `· ${areaName(area)} · ${ag.level} (${ag.name})${area === "zu" ? " · " + (ACTIVITIES[$("fActivity").value]?.name || "") : ""}`;
+    $("criteria").innerHTML = formCrits().map(c => {
       const cur = state.form.ratings[c.id] || 0;
       const sc = scaleOf(c);
       const prog = c.program && c.program[lv];
@@ -207,7 +239,7 @@
   }
 
   function renderResultBox() {
-    const res = calcResult(state.form.ratings, critsFor($("fActivity").value));
+    const res = calcResult(state.form.ratings, formCrits());
     const box = $("resultBox");
     box.hidden = !res;
     if (!res) return;
@@ -225,7 +257,9 @@
     const topic = $("fTopic").value.trim();
     const topicPart = topic ? `"${topic}" сэдвээр ` : "";
     const ratings = state.form.ratings;
-    const crits = critsFor(act).filter(c => ratings[c.id] > 0);
+    const area = $("fArea").value || "zu";
+    if (area !== "zu") return generateProgramConclusion(name, topicPart, area);
+    const crits = artCrits(act).filter(c => ratings[c.id] > 0);
 
     const intro = (ACTIVITIES[act]?.intro || "{name} {topic}бүтээл хийлээ.").replace("{topic}", topicPart);
     const body = [fill(intro, name)];
@@ -265,6 +299,38 @@
       if (pick.length) paras.push("Эцэг эхэд:\n" + pick.map(a => "• " + fill(a, name)).join("\n"));
     }
 
+    $("fConclusion").value = paras.join("\n\n");
+    if (!crits.length) toast("Шалгуурын түвшнээ сонговол дүгнэлт илүү дэлгэрэнгүй гарна.");
+  }
+
+  /* Зураг, урлалаас бусад чиглэлийн дүгнэлт: хөтөлбөрийн үр дүнгийн бичвэр дээр тулгуурлана */
+  function generateProgramConclusion(name, topicPart, area) {
+    const ratings = state.form.ratings;
+    const lv = $("fLevel").value || "ahlah";
+    const crits = formCrits().filter(c => ratings[c.id] > 0);
+    const social = area === "nsh";
+    const text = c => c.outcome[lv].text.replace(/\s*болно\.$/, " болсон.");
+    const paras = [[`${name} ${topicPart}«${areaName(area)}» чиглэлийн үйл ажиллагаанд оролцлоо.`]
+      .concat(crits.filter(c => ratings[c.id] === 3).map(text)).join(" ")];
+    const part = crits.filter(c => ratings[c.id] === 2);
+    const none = crits.filter(c => ratings[c.id] === 1);
+    const item = c => `• ${c.outcome[lv].code}. ${c.outcome[lv].text}`;
+    if (part.length) paras.push((social ? "Хааяа илэрдэг:" : "Хэсэгчлэн гүйцэтгэж буй, цаашид дэмжих чадвар:") + "\n" + part.map(item).join("\n"));
+    if (none.length) paras.push((social ? "Одоогоор илрээгүй:" : "Нэмэлт дэмжлэг шаардлагатай чадвар:") + "\n" + none.map(item).join("\n"));
+
+    const S = state.bank.summary;
+    const res = calcResult(ratings, crits);
+    if (res) paras.push(fill(S[res.band], name).replace("{pct}", res.pct));
+    if ($("optAdvice").checked && crits.length) {
+      if (part.length || none.length) { if (AREA_ADVICE[area]) paras.push("Зөвлөмж: " + AREA_ADVICE[area]); }
+      else if (S.allHigh) paras.push("Зөвлөмж: " + fill(S.allHigh, name));
+    }
+    if ($("optParents").checked) {
+      const pool = (state.bank.chips["Эцэг эхэд"] || []).slice();
+      const pick = [];
+      while (pool.length && pick.length < 2) pick.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+      if (pick.length) paras.push("Эцэг эхэд:\n" + pick.map(a => "• " + fill(a, name)).join("\n"));
+    }
     $("fConclusion").value = paras.join("\n\n");
     if (!crits.length) toast("Шалгуурын түвшнээ сонговол дүгнэлт илүү дэлгэрэнгүй гарна.");
   }
@@ -355,6 +421,7 @@
     $("fDate").value = today();
     $("fTopic").value = "";
     $("fAssess").value = "yavts";
+    if (!$("fArea").value) $("fArea").value = "zu";
     $("fConclusion").value = "";
     const g = activeGroup();
     $("fLevel").value = g ? g.ageKey : "ahlah";
@@ -368,7 +435,8 @@
     const g = activeGroup();
     const act = $("fActivity").value;
     const lv = $("fLevel").value;
-    const crits = critsFor(act);
+    const area = $("fArea").value || "zu";
+    const crits = formCrits();
     const ratings = {};
     crits.forEach(c => { if (state.form.ratings[c.id] > 0) ratings[c.id] = state.form.ratings[c.id]; });
     const detail = crits.filter(c => ratings[c.id]).map(c => ({
@@ -388,6 +456,7 @@
       age: $("fAge").value.trim(),
       date: $("fDate").value,
       topic: $("fTopic").value.trim(),
+      area,
       activity: act,
       assessType: $("fAssess").value,
       teacher: $("fTeacher").value.trim(),
@@ -436,6 +505,7 @@
     $("fAge").value = rec.age || "";
     $("fDate").value = rec.date || today();
     $("fTopic").value = rec.topic || "";
+    $("fArea").value = rec.area || "zu";
     $("fActivity").value = rec.activity || "zurag";
     $("fAssess").value = rec.assessType || "yavts";
     $("fLevel").value = rec.ageKey || "ahlah";
@@ -463,12 +533,12 @@
   /* ---------- Бүтээлийн сан ---------- */
   function filteredRecords() {
     const q = $("rSearch").value.trim().toLowerCase();
-    const act = $("rActivity").value;
+    const [fk, fv] = ($("rActivity").value || ":").split(":");
     const from = $("rFrom").value, to = $("rTo").value;
     const all = $("rAllGroups").checked;
     return state.records
       .filter(r => all || r.groupId === state.activeGroupId)
-      .filter(r => !act || r.activity === act)
+      .filter(r => !fk || (fk === "a" ? (r.area || "zu") === fv : (r.area || "zu") === "zu" && r.activity === fv))
       .filter(r => !from || (r.date || "") >= from)
       .filter(r => !to || (r.date || "") <= to)
       .filter(r => !q || [r.child, r.topic, r.groupName, r.conclusion].join(" ").toLowerCase().includes(q))
@@ -490,7 +560,7 @@
         <div class="rec-img">${r.images && r.images[0] ? `<img src="${r.images[0].src}" alt="">` : "🎨"}</div>
         <div class="rec-body">
           <div><b>${esc(r.child)}</b> ${recTag(r)}</div>
-          <div class="muted small">${esc(r.date || "")}${r.age ? " · " + esc(r.age) : ""} · ${esc(r.groupName)} · ${esc(ACTIVITIES[r.activity]?.name || "")}</div>
+          <div class="muted small">${esc(r.date || "")}${r.age ? " · " + esc(r.age) : ""} · ${esc(r.groupName)} · ${esc(actLabel(r))}</div>
           <div class="small">${esc(r.topic || "")}</div>
         </div>
         <div class="rec-actions">
@@ -600,6 +670,7 @@
 
         <div class="card">
           <h2>Ахицын байдал</h2>
+          ${areaSummary(recs)}
           ${progressChart(recs)}
         </div>
       </div>
@@ -623,13 +694,14 @@
       </div>
 
       <div class="card">
-        <h2>Бүтээлүүд <small>цаг хугацааны дарааллаар</small></h2>
+        <h2>Үнэлгээ, бүтээлүүд <small>цаг хугацааны дарааллаар</small></h2>
         <div class="works">
           ${recs.map(r => `
             <button class="work" data-rec="${r.id}" title="Засах">
               <span class="work-img">${r.images && r.images[0] ? `<img src="${r.images[0].src}" alt="">` : "🎨"}</span>
               <span class="work-meta">
-                <b>${esc(r.topic || ACTIVITIES[r.activity]?.name || "Бүтээл")}</b>
+                <b>${esc(r.topic || actLabel(r))}</b>
+                <small class="work-area">${esc(areaName(r.area))}</small>
                 <small>${esc(r.date)}${r.age ? " · " + esc(r.age) : ""}</small>
                 ${recTag(r)}
               </span>
@@ -637,6 +709,16 @@
         </div>
       </div>`;
     if (draft) $("kNoteText").value = draft;
+  }
+
+  /* Чиглэл бүрийн сүүлийн үнэлгээ */
+  function areaSummary(recs) {
+    const chips = PROGRAM_AREAS.map(a => {
+      const last = recs.filter(r => (r.area || "zu") === a.id && r.result).slice(-1)[0];
+      return `<span class="area-chip ${last ? "lv" + RESULT_BANDS[last.result.band].tag : ""}" title="${esc(a.name)}">
+        <b>${esc(a.name)}</b><small>${last ? esc(resultLabel(last.result)) : "Үнэлээгүй"}</small></span>`;
+    }).join("");
+    return `<div class="area-chips">${chips}</div>`;
   }
 
   function progressChart(recs) {
@@ -649,7 +731,7 @@
         <div class="bars">${pts.map(r => `
           <div class="bar-col" title="${esc(r.date)} · ${esc(r.topic || "")} · ${r.result.pct}%">
             <div class="bar lv${RESULT_BANDS[r.result.band].tag}" style="height:${Math.max(4, r.result.pct)}%"><span>${Math.round(r.result.pct)}</span></div>
-            <small>${esc((r.date || "").slice(5))}</small>
+            <small>${esc((areaById(r.area) || {}).code || "")}<br>${esc((r.date || "").slice(5))}</small>
           </div>`).join("")}</div>
       </div>
       <p class="small">${pts.length > 1 ? `Эхний үнэлгээнээс хойш <b>${diff >= 0 ? "+" : ""}${diff}%</b> ${diff > 0 ? "ахицтай 🌱" : diff < 0 ? "буурсан — анхаарах шаардлагатай" : "өөрчлөлтгүй"}.` : "Дараагийн бүтээлүүдтэй харьцуулж ахицыг харна."}</p>`;
@@ -751,7 +833,7 @@
     const out = [];
     const school = r.school || state.settings.school;
     if (school) out.push(p(run(school, { size: 22, color: "555555" }), { alignment: D.AlignmentType.CENTER, pageBreakBefore: pageBreak }));
-    out.push(p(run("ХҮҮХДИЙН БҮТЭЭЛИЙН ДҮГНЭЛТ", { bold: true, size: 30 }), {
+    out.push(p(run(docTitle(r), { bold: true, size: 30 }), {
       alignment: D.AlignmentType.CENTER, spacing: { after: 200 }, pageBreakBefore: pageBreak && !school
     }));
 
@@ -759,8 +841,8 @@
     out.push(infoTable([
       ["Хүүхдийн нэр", r.child], ["Нас", r.age],
       ["Бүлэг", r.groupName], ["Огноо", r.date],
-      ["Үйл ажиллагаа", ACTIVITIES[r.activity]?.name || ""], ["Сэдэв", r.topic],
-      ["Үнэлгээ", ASSESS_TYPES[r.assessType] || ""], ["Хөтөлбөр", ag ? `Зураг, урлал · ${ag.level}` : ""]
+      ["Чиглэл", actLabel(r)], ["Сэдэв", r.topic],
+      ["Үнэлгээ", ASSESS_TYPES[r.assessType] || ""], ["Хөтөлбөрийн түвшин", ag ? ag.level : ""]
     ]));
     out.push(p(run(""), { spacing: { after: 120 } }));
 
@@ -818,7 +900,7 @@
     const out = [];
     if (state.settings.school) out.push(p(run(state.settings.school, { size: 22, color: "555555" }), { alignment: D.AlignmentType.CENTER }));
     out.push(p(run("ХҮҮХДИЙН ХУВИЙН ХАВТАС", { bold: true, size: 34 }), { alignment: D.AlignmentType.CENTER }));
-    out.push(p(run("Зураг, урлал", { size: 24, color: "555555" }), { alignment: D.AlignmentType.CENTER, spacing: { after: 240 } }));
+    out.push(p(run("Хүүхдийн хөгжлийн үнэлгээ, бүтээл", { size: 24, color: "555555" }), { alignment: D.AlignmentType.CENTER, spacing: { after: 240 } }));
     out.push(infoTable([
       ["Хүүхдийн нэр", kid.name], ["Хүйс", kid.sex],
       ["Төрсөн огноо", kid.birth], ["Одоогийн нас", ageText(kid.birth)],
@@ -831,14 +913,14 @@
     }
 
     if (recs.length) {
-      out.push(p(run("Бүтээлийн жагсаалт", { bold: true, size: 26 }), { spacing: { before: 240, after: 80 } }));
+      out.push(p(run("Үнэлгээ, бүтээлийн жагсаалт", { bold: true, size: 26 }), { spacing: { before: 240, after: 80 } }));
       const rows = [new D.TableRow({ tableHeader: true, children: [
         cell("№", { bold: true, shade: "E8EEF7", width: 6 }), cell("Огноо", { bold: true, shade: "E8EEF7", width: 15 }),
         cell("Нас", { bold: true, shade: "E8EEF7", width: 15 }), cell("Сэдэв", { bold: true, shade: "E8EEF7", width: 26 }),
-        cell("Төрөл", { bold: true, shade: "E8EEF7", width: 18 }), cell("Үнэлгээ", { bold: true, shade: "E8EEF7", width: 20 })
+        cell("Чиглэл", { bold: true, shade: "E8EEF7", width: 18 }), cell("Үнэлгээ", { bold: true, shade: "E8EEF7", width: 20 })
       ] })];
       recs.forEach((r, i) => rows.push(row([
-        cell(i + 1), cell(r.date), cell(r.age), cell(r.topic), cell(ACTIVITIES[r.activity]?.name || ""), cell(resultLabel(r.result))
+        cell(i + 1), cell(r.date), cell(r.age), cell(r.topic), cell(actLabel(r)), cell(resultLabel(r.result))
       ])));
       out.push(table(rows));
     }
@@ -883,12 +965,12 @@
     const hasCode = (r.ratingDetail || []).some(d => d.code);
     return `<div class="print-page">
       ${school ? `<div class="p-school">${esc(school)}</div>` : ""}
-      <h1>ХҮҮХДИЙН БҮТЭЭЛИЙН ДҮГНЭЛТ</h1>
+      <h1>${docTitle(r)}</h1>
       <table class="p-info">
         <tr><th>Хүүхдийн нэр</th><td>${esc(r.child)}</td><th>Нас</th><td>${esc(r.age)}</td></tr>
         <tr><th>Бүлэг</th><td>${esc(r.groupName)}</td><th>Огноо</th><td>${esc(r.date)}</td></tr>
-        <tr><th>Үйл ажиллагаа</th><td>${esc(ACTIVITIES[r.activity]?.name || "")}</td><th>Сэдэв</th><td>${esc(r.topic)}</td></tr>
-        <tr><th>Үнэлгээ</th><td>${esc(ASSESS_TYPES[r.assessType] || "")}</td><th>Хөтөлбөр</th><td>${ag ? "Зураг, урлал · " + ag.level : ""}</td></tr>
+        <tr><th>Чиглэл</th><td>${esc(actLabel(r))}</td><th>Сэдэв</th><td>${esc(r.topic)}</td></tr>
+        <tr><th>Үнэлгээ</th><td>${esc(ASSESS_TYPES[r.assessType] || "")}</td><th>Хөтөлбөрийн түвшин</th><td>${ag ? ag.level : ""}</td></tr>
       </table>
       ${imgs.length ? `<div class="p-imgs ${imgs.length === 1 ? "one" : ""}">${imgs.map(im => `<img src="${im.src}" alt="">`).join("")}</div>` : ""}
       ${r.ratingDetail && r.ratingDetail.length ? `<table class="p-rate">
@@ -915,9 +997,9 @@
         <tr><th>Эцэг/эхийн нэр</th><td>${esc(kid.parent)}</td><th>Утас</th><td>${esc(kid.phone)}</td></tr>
       </table>
       ${kid.about ? `<h2>Онцлог, сонирхол, хэрэгцээ</h2><div class="p-text">${esc(kid.about).replace(/\n/g, "<br>")}</div>` : ""}
-      ${recs.length ? `<h2>Бүтээлийн жагсаалт</h2><table class="p-rate">
-        <tr><th>№</th><th>Огноо</th><th>Нас</th><th>Сэдэв</th><th>Төрөл</th><th>Үнэлгээ</th></tr>
-        ${recs.map((r, i) => `<tr><td>${i + 1}</td><td>${esc(r.date)}</td><td>${esc(r.age)}</td><td>${esc(r.topic)}</td><td>${esc(ACTIVITIES[r.activity]?.name || "")}</td><td>${esc(resultLabel(r.result))}</td></tr>`).join("")}
+      ${recs.length ? `<h2>Үнэлгээ, бүтээлийн жагсаалт</h2><table class="p-rate">
+        <tr><th>№</th><th>Огноо</th><th>Нас</th><th>Сэдэв</th><th>Чиглэл</th><th>Үнэлгээ</th></tr>
+        ${recs.map((r, i) => `<tr><td>${i + 1}</td><td>${esc(r.date)}</td><td>${esc(r.age)}</td><td>${esc(r.topic)}</td><td>${esc(actLabel(r))}</td><td>${esc(resultLabel(r.result))}</td></tr>`).join("")}
       </table>` : ""}
       ${kid.notes && kid.notes.length ? `<h2>Ажиглалт, ярилцлагын тэмдэглэл</h2>
         ${kid.notes.slice().sort((a, b) => (a.date || "").localeCompare(b.date || "")).map(n => `<p class="p-text"><b>${esc(n.date)} · ${esc(NOTE_TYPES[n.type] || n.type)}:</b> ${esc(n.text)}</p>`).join("")}` : ""}
@@ -1084,7 +1166,17 @@
 
   /* ---------- Хөтөлбөр ---------- */
   function renderReference() {
-    $("expectTable").innerHTML = `<table class="ref-table">
+    const a = areaById($("refArea").value);
+    const lvTh = AGE_KEYS.map(k => `<th>${AGE_GROUPS[k].level}<br><small>${AGE_GROUPS[k].name} · ${AGE_GROUPS[k].age}</small></th>`).join("");
+    let html = `<div class="ref-goal"><p><b>Зорилго:</b> ${esc(a.goal)}</p>
+      <p><b>Хүрэх үр дүн:</b></p><ul>${a.outcomes.map(o => `<li>${esc(o)}</li>`).join("")}</ul></div>
+      <table class="ref-table"><tr><th>Дэд ай</th>${lvTh}</tr>
+      ${a.subareas.map(sub => sub.items.map((it, ii) => `<tr>${ii === 0 ? `<td rowspan="${sub.items.length}"><b>${esc(sub.name)}</b></td>` : ""}
+        ${AGE_KEYS.map(k => `<td>${it[k] ? `<b>${esc(it[k].code)}.</b> ${esc(it[k].text)}` : "—"}</td>`).join("")}</tr>`).join("")).join("")}
+      </table>
+      <div class="ref-crit"><h3>Үнэлгээний шалгуур</h3>${Object.entries(a.criteria).map(([k, v]) => `<p><b>${esc(k)}</b></p><ul>${v.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`).join("")}</div>`;
+    if (a.id !== "zu") { $("expectTable").innerHTML = html; $("refText").value = state.reference; return; }
+    $("expectTable").innerHTML = html + `<h3>Зураг, урлалын дэлгэрэнгүй шалгуур ба үнэлгээний хуудас (гарын авлага)</h3><table class="ref-table">
       <tr><th>Шалгуур</th>${AGE_KEYS.map(k => `<th>${AGE_GROUPS[k].level}<br><small>${AGE_GROUPS[k].name} · ${AGE_GROUPS[k].age}</small></th>`).join("")}</tr>
       ${enabledCriteria().map(c => `<tr><td><b>${esc(c.name)}</b><br><small class="muted">${esc(DOMAINS[c.domain] || "")}${c.comp ? " · " + esc(COMPETENCIES[c.comp]) : ""}</small></td>
         ${AGE_KEYS.map(k => `<td>${esc((c.program && c.program[k]) || "")}${c.sheet && c.sheet[k] ? `<div class="muted small mt">📋 ${AGE_GROUPS[k].sheet}: ${esc(c.sheet[k])}</div>` : ""}</td>`).join("")}</tr>`).join("")}
@@ -1192,6 +1284,7 @@
     $("fChild").addEventListener("change", fillAgeFromKid);
     $("fDate").addEventListener("change", fillAgeFromKid);
     $("fActivity").addEventListener("change", renderCriteria);
+    $("fArea").addEventListener("change", renderCriteria);
     $("fLevel").addEventListener("change", renderCriteria);
 
     // Шалгуурын түвшин
@@ -1205,7 +1298,7 @@
     });
     document.querySelectorAll("[data-setall]").forEach(b => b.addEventListener("click", () => {
       const lv = +b.dataset.setall;
-      critsFor($("fActivity").value).forEach(c => { state.form.ratings[c.id] = lv; });
+      formCrits().forEach(c => { state.form.ratings[c.id] = lv; });
       renderCriteria();
     }));
 
@@ -1444,6 +1537,7 @@
     });
 
     // Хөтөлбөр
+    $("refArea").addEventListener("change", renderReference);
     $("btnSaveRef").addEventListener("click", async () => {
       state.reference = $("refText").value;
       await DB.setKV("reference", state.reference);
@@ -1478,7 +1572,13 @@
     $("fActivity").innerHTML = opts(ACTIVITIES);
     $("fAssess").innerHTML = opts(ASSESS_TYPES);
     $("fLevel").innerHTML = AGE_KEYS.map(k => `<option value="${k}">${AGE_GROUPS[k].level} (${AGE_GROUPS[k].name})</option>`).join("");
-    $("rActivity").innerHTML = `<option value="">Бүх төрөл</option>` + opts(ACTIVITIES);
+    $("fArea").innerHTML = PROGRAM_AREAS.map(a => `<option value="${a.id}">${a.name}</option>`).join("");
+    $("fArea").value = "zu";
+    $("rActivity").innerHTML = `<option value="">Бүх чиглэл</option>` +
+      PROGRAM_AREAS.map(a => `<option value="a:${a.id}">${a.name}</option>` +
+        (a.id === "zu" ? Object.keys(ACTIVITIES).map(k => `<option value="z:${k}">   · ${ACTIVITIES[k].name}</option>`).join("") : "")).join("");
+    $("refArea").innerHTML = PROGRAM_AREAS.map(a => `<option value="${a.id}">${a.name}</option>`).join("");
+    $("refArea").value = "zu";
     resetForm();
     renderGroupSelect();
     renderGroups();

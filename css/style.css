@@ -441,3 +441,18 @@ input:focus, select:focus, textarea:focus { outline: none; box-shadow: 0 0 0 4px
 .work-meta small { color: #6c6a8f; }
 
 @media print { .p-code { font-size: 9.5pt; } }
+
+/* ---------- Сургалтын чиглэлүүд ---------- */
+.area-chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin-bottom: 14px; }
+.area-chip {
+  display: flex; flex-direction: column; padding: 6px 10px; border: 2px solid var(--line); border-radius: 12px;
+  background: var(--soft); font-size: 13px; line-height: 1.3; min-width: 0;
+}
+.area-chip small { color: var(--muted); font-weight: 800; }
+.area-chip.lv3 { background: var(--mint-soft); } .area-chip.lv2 { background: var(--sun-soft); } .area-chip.lv1 { background: var(--coral-soft); }
+.bar-col small { height: auto; line-height: 1.15; text-align: center; padding-top: 2px; }
+.work-area { color: var(--grape) !important; font-weight: 800; }
+.ref-goal, .ref-crit { max-width: 90ch; }
+.ref-goal ul, .ref-crit ul { margin: 4px 0 10px; padding-left: 22px; }
+.ref-crit h3, #expectTable h3 { font-family: var(--font-display); margin: 18px 0 6px; }
+#expectTable .ref-table { margin-top: 8px; }
