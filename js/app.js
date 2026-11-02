@@ -1318,6 +1318,13 @@
       renderChips();
     }
     if (!state.activeGroupId && state.groups[0]) { state.activeGroupId = state.groups[0].id; DB.setKV("activeGroup", state.activeGroupId); }
+    // Нэг хүүхдийн файл оруулсан бол тухайн хүүхдийн бүлгийг нээнэ
+    const kid1 = data.kind === "child" && data.children && kidById(data.children[0].id);
+    if (kid1 && groupById(kid1.groupId)) {
+      state.activeGroupId = kid1.groupId;
+      state.kidId = kid1.id;
+      DB.setKV("activeGroup", kid1.groupId);
+    }
     renderGroupSelect();
     renderGroups();
     renderBackupInfo();
