@@ -32,7 +32,8 @@
   </header>
 
   <nav class="tabs" id="tabs">
-    <button data-tab="write" class="active">✏️ Дүгнэлт бичих</button>
+    <button data-tab="home" class="active">🏠 Бүлгүүд</button>
+    <button data-tab="write">✏️ Дүгнэлт бичих</button>
     <button data-tab="children">🧒 Хувийн хавтас</button>
     <button data-tab="records">🗂 Бүтээлийн сан</button>
     <button data-tab="groups">👥 Бүлэг</button>
@@ -43,7 +44,16 @@
 
   <main>
     <!-- ДҮГНЭЛТ БИЧИХ -->
-    <section id="tab-write" class="tab active">
+    <!-- НҮҮР: БҮЛГҮҮД -->
+    <section id="tab-home" class="tab active">
+      <div class="home-hero">
+        <h2>Бүлгээ сонгож нээнэ үү</h2>
+        <p class="muted">Бүлэг бүр өөрийн хүүхдүүд, үнэлгээ, хувийн хавтастай тусдаа нээгдэнэ. Нээсэн бүлгийн өнгө толгой хэсэгт харагдана.</p>
+      </div>
+      <div id="homeGroups" class="home-grid"></div>
+    </section>
+
+    <section id="tab-write" class="tab">
       <div class="notice" id="noGroupNotice" hidden>
         Эхлээд <b>👥 Бүлэг</b> цэснээс бүлгээ үүсгэнэ үү.
         <button class="btn small" data-goto="groups">Бүлэг үүсгэх</button>

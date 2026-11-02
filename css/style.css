@@ -456,3 +456,49 @@ input:focus, select:focus, textarea:focus { outline: none; box-shadow: 0 0 0 4px
 .ref-goal ul, .ref-crit ul { margin: 4px 0 10px; padding-left: 22px; }
 .ref-crit h3, #expectTable h3 { font-family: var(--font-display); margin: 18px 0 6px; }
 #expectTable .ref-table { margin-top: 8px; }
+
+/* ---------- Нүүр: бүлгүүд ---------- */
+.tabs button:nth-child(8) { --c: var(--orange); }
+:root { --age-baga: #8fe6c0; --age-dund: #8fdcf7; --age-ahlah: #ffd84d; --age-beltgel: #c3adff; }
+body[data-age="baga"] .topbar { background: var(--age-baga); }
+body[data-age="dund"] .topbar { background: var(--age-dund); }
+body[data-age="ahlah"] .topbar { background: var(--age-ahlah); }
+body[data-age="beltgel"] .topbar { background: var(--age-beltgel); }
+
+.home-hero { margin: 4px 0 18px; }
+.home-hero h2 { font-size: 26px; margin-bottom: 4px; }
+.home-hero p { margin: 0; max-width: 70ch; }
+.home-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+@media (max-width: 760px) { .home-grid { grid-template-columns: 1fr; } }
+.home-card {
+  --c: var(--age-ahlah);
+  display: flex; flex-direction: column; gap: 12px; min-width: 0;
+  background: var(--paper); border: var(--bw) solid var(--line); border-radius: var(--r);
+  padding: 0 18px 18px; box-shadow: var(--pop); overflow: hidden;
+}
+.home-card.age-baga { --c: var(--age-baga); }
+.home-card.age-dund { --c: var(--age-dund); }
+.home-card.age-ahlah { --c: var(--age-ahlah); }
+.home-card.age-beltgel { --c: var(--age-beltgel); }
+.home-card-head {
+  display: flex; align-items: center; gap: 14px; margin: 0 -18px; padding: 16px 18px;
+  background: var(--c); border-bottom: var(--bw) solid var(--line); color: #2b2a4c;
+}
+.home-card-head h3 { margin: 0; font: 700 24px var(--font-display); }
+.home-card-head small { font-weight: 800; opacity: .8; }
+.home-emoji {
+  font-size: 34px; width: 62px; height: 62px; flex: none; display: grid; place-items: center;
+  background: #fff; border: var(--bw) solid #2b2a4c; border-radius: 50%; box-shadow: 3px 3px 0 #2b2a4c;
+}
+.home-card:hover .home-emoji { animation: wiggle 1s ease-in-out infinite; }
+.home-group {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  border: 2.5px solid var(--line); border-radius: 16px; padding: 10px 12px; background: var(--soft);
+}
+.home-group.on { background: color-mix(in srgb, var(--c) 35%, var(--paper)); }
+.home-group.on .home-group-info b::after { content: " ✓"; }
+.home-group-info { display: flex; flex-direction: column; min-width: 0; }
+.home-group-info b { font: 700 18px var(--font-display); }
+.home-group-info small { color: var(--muted); font-weight: 700; }
+.home-group-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.home-card > .btn.ghost { align-self: flex-start; }

@@ -147,6 +147,17 @@
       await DB.setKV("refVersion", REF_VERSION);
     }
 
+    // Бага, дунд, ахлах, бэлтгэл бүлгийг нэг удаа автоматаар үүсгэнэ
+    if (!state.settings.defaultGroupsDone) {
+      for (const k of AGE_KEYS) {
+        if (!state.groups.some(g => g.ageKey === k)) state.groups.push({ id: uid(), name: AGE_GROUPS[k].name, ageKey: k, teacher: state.settings.teacher || "" });
+      }
+      state.settings.defaultGroupsDone = true;
+      await saveSettings();
+      await saveGroups();
+      if (!state.activeGroupId) state.activeGroupId = state.groups[0].id;
+    }
+
     // Өмнөх хувилбарт хүүхдийн нэрс бүлэг дотор хадгалагддаг байсныг хувийн хавтас болгоно
     let changed = false;
     for (const g of state.groups) {
@@ -176,7 +187,57 @@
     if (name === "backup") renderBackupInfo();
     if (name === "reference") renderReference();
     if (name === "children") renderKids();
+    if (name === "home") renderHome();
+    document.querySelector("#tabs button.active")?.scrollIntoView({ block: "nearest", inline: "nearest" });
     window.scrollTo(0, 0);
+  }
+
+  /* ---------- Нүүр: бүлэг бүрийг тусад нь нээх ---------- */
+  const GROUP_LOOK = {
+    baga:    { emoji: "🐣", note: "Анхны алхам" },
+    dund:    { emoji: "🐥", note: "Нээж, турших" },
+    ahlah:   { emoji: "🦊", note: "Бүтээж, ярилцах" },
+    beltgel: { emoji: "🦉", note: "Сургуульд бэлтгэх" }
+  };
+
+  function renderHome() {
+    $("homeGroups").innerHTML = AGE_KEYS.map(k => {
+      const ag = AGE_GROUPS[k];
+      const groups = state.groups.filter(g => g.ageKey === k);
+      const rows = groups.map(g => {
+        const kids = kidsOf(g.id).length, recs = state.records.filter(r => r.groupId === g.id).length;
+        return `<div class="home-group ${g.id === state.activeGroupId ? "on" : ""}">
+          <div class="home-group-info"><b>${esc(g.name)}</b>
+            <small>${kids} хүүхэд · ${recs} үнэлгээ${g.teacher ? " · " + esc(g.teacher) : ""}</small></div>
+          <div class="home-group-actions">
+            <button class="btn primary small" data-open="${g.id}" data-to="children">📂 Нээх</button>
+            <button class="btn small" data-open="${g.id}" data-to="write">✏️ Дүгнэлт</button>
+          </div>
+        </div>`;
+      }).join("");
+      return `<div class="home-card age-${k}">
+        <div class="home-card-head">
+          <span class="home-emoji" aria-hidden="true">${GROUP_LOOK[k].emoji}</span>
+          <div><h3>${ag.name}</h3><small>${ag.age} · Хөтөлбөрийн ${ag.level} · ${GROUP_LOOK[k].note}</small></div>
+        </div>
+        ${rows || `<p class="muted small">Энэ насны бүлэг алга.</p>`}
+        <button class="btn small ghost" data-newgroup="${k}">➕ ${ag.name} нэмэх</button>
+      </div>`;
+    }).join("");
+  }
+
+  function openGroup(id, tab) {
+    if (state.activeGroupId !== id) {
+      state.activeGroupId = id;
+      state.kidId = null;
+      DB.setKV("activeGroup", id);
+      if (!state.form.id) resetForm();
+      renderGroupSelect();
+      renderGroups();
+    }
+    const g = activeGroup();
+    toast(`${GROUP_LOOK[g.ageKey].emoji} ${g.name} нээгдлээ`);
+    showTab(tab || "children");
   }
 
   /* ---------- Толгой хэсэг: бүлэг сонгох ---------- */
@@ -188,6 +249,9 @@
     if (state.activeGroupId) sel.value = state.activeGroupId;
     $("noGroupNotice").hidden = state.groups.length > 0;
     $("schoolLabel").textContent = [state.settings.school, state.settings.year].filter(Boolean).join(" · ") || "СӨБ · Сургалтын 7 чиглэл";
+    const ag = activeGroup();
+    document.body.dataset.age = ag ? ag.ageKey : "";
+    if ($("tab-home").classList.contains("active")) renderHome();
     renderChildList();
     syncLevelToGroup();
     renderCriteria();
@@ -1266,10 +1330,25 @@
     $("tabs").addEventListener("click", e => { const b = e.target.closest("button[data-tab]"); if (b) showTab(b.dataset.tab); });
     document.querySelectorAll("[data-goto]").forEach(b => b.addEventListener("click", () => showTab(b.dataset.goto)));
 
+    $("homeGroups").addEventListener("click", e => {
+      const o = e.target.closest("[data-open]");
+      if (o) { openGroup(o.dataset.open, o.dataset.to); return; }
+      const n = e.target.closest("[data-newgroup]");
+      if (n) {
+        resetGroupForm();
+        $("gAge").value = n.dataset.newgroup;
+        $("gName").value = AGE_GROUPS[n.dataset.newgroup].name + "-" + (state.groups.filter(g => g.ageKey === n.dataset.newgroup).length + 1);
+        showTab("groups");
+        $("gChildren").focus();
+      }
+    });
+
     $("activeGroup").addEventListener("change", e => {
       state.activeGroupId = e.target.value;
       state.kidId = null;
       DB.setKV("activeGroup", state.activeGroupId);
+      document.body.dataset.age = activeGroup()?.ageKey || "";
+      if ($("tab-home").classList.contains("active")) renderHome();
       renderChildList();
       syncLevelToGroup();
       renderCriteria();
@@ -1586,7 +1665,7 @@
     renderChips();
     renderBank();
     bind();
-    if (!state.groups.length) showTab("groups");
+    showTab(state.groups.length ? "home" : "groups");
     if (state.migratedBank) setTimeout(() => toast("📘 Үгийн сан 2025 оны хөтөлбөр, үнэлгээний гарын авлагын дагуу шинэчлэгдлээ.", 6000), 600);
     const lb = state.settings.lastBackup;
     if (state.records.length >= 5 && (!lb || Date.now() - lb > 7 * 864e5)) {
