@@ -502,3 +502,9 @@ body[data-age="beltgel"] .topbar { background: var(--age-beltgel); }
 .home-group-info small { color: var(--muted); font-weight: 700; }
 .home-group-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .home-card > .btn.ghost { align-self: flex-start; }
+.clean-panel {
+  flex-basis: 100%; margin-top: 4px; padding: 10px 12px; border: 2px dashed var(--line); border-radius: 12px;
+  background: var(--paper); display: flex; flex-direction: column; gap: 4px; min-width: 0;
+}
+.clean-panel p { margin: 0; }
+.clean-list { padding-left: 27px; overflow-wrap: anywhere; }

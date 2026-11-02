@@ -212,7 +212,9 @@
           <div class="home-group-actions">
             <button class="btn primary small" data-open="${g.id}" data-to="children">📂 Нээх</button>
             <button class="btn small" data-open="${g.id}" data-to="write">✏️ Дүгнэлт</button>
+            <button class="btn small ghost" data-clean="${g.id}" title="Хоосон файлуудыг устгах">🧹 Цэвэрлэх</button>
           </div>
+          ${state.cleanOpen === g.id ? cleanPanel(g) : ""}
         </div>`;
       }).join("");
       return `<div class="home-card age-${k}">
@@ -224,6 +226,74 @@
         <button class="btn small ghost" data-newgroup="${k}">➕ ${ag.name} нэмэх</button>
       </div>`;
     }).join("");
+  }
+
+  /* ---------- Бүлгийн хоосон файлуудыг цэвэрлэх ---------- */
+  const isEmptyRecord = r => !(r.images && r.images.length) && !(r.conclusion || "").trim() && !Object.keys(r.ratings || {}).length;
+
+  function emptyItems(g) {
+    const recs = state.records.filter(r => r.groupId === g.id && isEmptyRecord(r));
+    const recIds = new Set(recs.map(r => r.id));
+    // Хоосон үнэлгээ устсаны дараа хоосон үлдэх хавтсыг мөн тооцно
+    const kids = kidsOf(g.id).filter(k => {
+      const own = state.records.filter(r => r.childId === k.id);
+      return own.every(r => recIds.has(r.id)) && !(k.notes && k.notes.length) &&
+        !k.birth && !k.sex && !k.parent && !k.phone && !(k.about || "").trim();
+    });
+    const groupEmpty = kidsOf(g.id).length === kids.length && state.records.filter(r => r.groupId === g.id).length === recs.length;
+    return { recs, kids, groupEmpty };
+  }
+
+  function cleanPanel(g) {
+    const { recs, kids, groupEmpty } = emptyItems(g);
+    if (!recs.length && !kids.length && !groupEmpty) {
+      return `<div class="clean-panel"><p class="small">Хоосон файл алга 👍</p>
+        <button class="btn small" data-cleanclose="1">Хаах</button></div>`;
+    }
+    const names = list => list.slice(0, 8).join(", ") + (list.length > 8 ? ` … (+${list.length - 8})` : "");
+    return `<div class="clean-panel" data-panel="${g.id}">
+      <p class="small"><b>Хоосон файлууд</b> — зураг, үнэлгээ, дүгнэлт, мэдээлэл огт оруулаагүй зүйлс:</p>
+      ${recs.length ? `<label class="check"><input type="checkbox" data-cl="recs" checked> Хоосон үнэлгээ (${recs.length})</label>
+        <p class="muted small clean-list">${esc(names(recs.map(r => `${r.child || "Нэргүй"} ${r.date || ""}`)))}</p>` : ""}
+      ${kids.length ? `<label class="check"><input type="checkbox" data-cl="kids" checked> Хоосон хүүхдийн хавтас (${kids.length})</label>
+        <p class="muted small clean-list">${esc(names(kids.map(k => k.name)))}</p>` : ""}
+      ${groupEmpty ? `<label class="check"><input type="checkbox" data-cl="group"> «${esc(g.name)}» бүлгийг бүхэлд нь устгах</label>` : ""}
+      <div class="row gap wrap mt">
+        <button class="btn small danger" data-cleanrun="${g.id}">🗑 Сонгосныг устгах</button>
+        <button class="btn small" data-cleanclose="1">Болих</button>
+      </div>
+    </div>`;
+  }
+
+  async function runClean(g) {
+    const panel = document.querySelector(`[data-panel="${g.id}"]`);
+    const on = k => panel.querySelector(`[data-cl="${k}"]`)?.checked;
+    const { recs, kids } = emptyItems(g);
+    const delRecs = on("recs") ? recs : [];
+    const delKids = on("kids") ? kids : [];
+    const delGroup = on("group");
+    if (!delRecs.length && !delKids.length && !delGroup) { toast("Устгах зүйлээ сонгоно уу."); return; }
+    const parts = [delRecs.length && `${delRecs.length} хоосон үнэлгээ`, delKids.length && `${delKids.length} хоосон хавтас`, delGroup && `«${g.name}» бүлэг`].filter(Boolean);
+    if (!confirm(`${parts.join(", ")}-ийг устгах уу? Буцаах боломжгүй.`)) return;
+    for (const r of delRecs) await DB.del(r.id);
+    const recIds = new Set(delRecs.map(r => r.id));
+    state.records = state.records.filter(r => !recIds.has(r.id));
+    // Үнэлгээ нь үлдсэн хүүхдийн хавтсыг устгахгүй
+    const kidIds = new Set(delKids.filter(k => !state.records.some(r => r.childId === k.id)).map(k => k.id));
+    state.children = state.children.filter(k => !kidIds.has(k.id));
+    await saveChildren();
+    if (delGroup && !kidsOf(g.id).length && !state.records.some(r => r.groupId === g.id)) {
+      state.groups = state.groups.filter(x => x.id !== g.id);
+      if (state.activeGroupId === g.id) { state.activeGroupId = state.groups[0]?.id || null; DB.setKV("activeGroup", state.activeGroupId); }
+      await saveGroups();
+    }
+    if (recIds.has(state.form.id)) resetForm();
+    if (kidIds.has(state.kidId)) state.kidId = null;
+    state.cleanOpen = null;
+    renderGroupSelect();
+    renderGroups();
+    renderHome();
+    toast(`🧹 Устгагдлаа: ${parts.join(", ")}`);
   }
 
   function openGroup(id, tab) {
@@ -1338,6 +1408,11 @@
     document.querySelectorAll("[data-goto]").forEach(b => b.addEventListener("click", () => showTab(b.dataset.goto)));
 
     $("homeGroups").addEventListener("click", e => {
+      const c = e.target.closest("[data-clean]");
+      if (c) { state.cleanOpen = state.cleanOpen === c.dataset.clean ? null : c.dataset.clean; renderHome(); return; }
+      if (e.target.closest("[data-cleanclose]")) { state.cleanOpen = null; renderHome(); return; }
+      const cr = e.target.closest("[data-cleanrun]");
+      if (cr) { runClean(groupById(cr.dataset.cleanrun)); return; }
       const o = e.target.closest("[data-open]");
       if (o) { openGroup(o.dataset.open, o.dataset.to); return; }
       const n = e.target.closest("[data-newgroup]");
