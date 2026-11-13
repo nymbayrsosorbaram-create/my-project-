@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Цэцэрлэгийн жилийн төлөвлөгөө</title>
+<style>
+  :root {
+    --bg: #f5f6f8; --panel: #fff; --text: #1d2330; --muted: #667085; --line: #d5d9e1;
+    --accent: #2457c5; --accent-soft: #e8eefb; --blue: #B4C6E7; --green: #C5E0B3;
+    --warn: #b54708; --warn-soft: #fef0e6;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  .btn { border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 6px 12px; cursor: pointer; white-space: nowrap; }
+  .btn:hover { border-color: var(--accent); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.danger { color: #b42318; }
+  .btn.small { padding: 2px 8px; font-size: 12px; }
+  input, select, textarea { border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; background: #fff; width: 100%; }
+  label { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--muted); }
+
+  header { background: var(--panel); border-bottom: 1px solid var(--line); padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  header h1 { font-size: 17px; margin: 0 auto 0 0; }
+  header .sub { font-size: 12px; color: var(--muted); font-weight: 400; display: block; }
+
+  .groups { display: flex; gap: 6px; padding: 12px 16px 0; flex-wrap: wrap; }
+  .groups button { border: 1px solid var(--line); background: #eceff4; border-radius: 10px 10px 0 0; padding: 8px 18px; cursor: pointer; border-bottom: none; }
+  .groups button b { display: block; font-size: 15px; }
+  .groups button span { font-size: 11px; color: var(--muted); }
+  .groups button.active { background: var(--panel); color: var(--accent); }
+
+  .shell { background: var(--panel); border-top: 1px solid var(--line); display: grid; grid-template-columns: 230px 1fr; min-height: 75vh; }
+  aside { border-right: 1px solid var(--line); padding: 12px 8px; }
+  aside button { display: flex; justify-content: space-between; width: 100%; text-align: left; border: none; background: none; padding: 8px 10px; border-radius: 6px; cursor: pointer; gap: 8px; }
+  aside button:hover { background: #f0f2f6; }
+  aside button.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  aside button small { color: var(--muted); font-weight: 400; }
+  aside hr { border: none; border-top: 1px solid var(--line); margin: 8px 0; }
+  .content { padding: 16px; min-width: 0; }
+  .content h2 { font-size: 16px; margin: 0 0 4px; }
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 8px 0 12px; }
+  .toolbar .grow { margin-right: auto; }
+  .muted { color: var(--muted); font-size: 12px; }
+  .scroll { overflow-x: auto; }
+
+  table.plan { border-collapse: collapse; width: 100%; min-width: 980px; font-size: 13px; }
+  .plan th, .plan td { border: 1px solid #9aa3b2; padding: 4px 6px; vertical-align: top; }
+  .plan th { background: #eef1f6; text-align: center; font-weight: 600; }
+  .plan td.m { text-align: center; vertical-align: middle; width: 58px; cursor: pointer; font-size: 12px; }
+  .plan td.m:hover { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .plan td.u { background: var(--blue); }
+  .plan td.d { background: var(--green); }
+  .plan td.num { text-align: center; vertical-align: middle; width: 56px; font-weight: 600; }
+  .plan td.out { min-width: 300px; }
+  .plan td.out .code { font-weight: 700; }
+  .plan td.out ul { margin: 4px 0 0; padding-left: 16px; color: #344054; font-size: 12px; }
+  .plan td.out .lnk-h { font-size: 12px; font-style: italic; color: var(--muted); margin-top: 4px; }
+  .plan tr.row:hover td.out { background: #fafbfd; }
+  .plan td.out { cursor: pointer; }
+  .plan tfoot td { font-weight: 700; background: #f6f7fa; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); align-items: center; }
+  .sw { display: inline-block; width: 14px; height: 14px; border: 1px solid #9aa3b2; vertical-align: -3px; margin-right: 4px; }
+  .warn-box { background: var(--warn-soft); color: var(--warn); border-radius: 8px; padding: 8px 12px; margin: 10px 0; font-size: 13px; }
+  .warn-box ul { margin: 4px 0 0; padding-left: 18px; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .card { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  .card .v { font-size: 22px; font-weight: 700; }
+  .card .l { font-size: 12px; color: var(--muted); }
+  table.sum { border-collapse: collapse; width: 100%; font-size: 13px; }
+  .sum th, .sum td { border: 1px solid var(--line); padding: 5px 8px; text-align: center; }
+  .sum th { background: #eef1f6; }
+  .sum td:first-child, .sum th:first-child { text-align: left; }
+  .sum td.heat { position: relative; }
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; max-width: 900px; }
+
+  dialog { border: none; border-radius: 12px; padding: 0; width: min(560px, 94vw); box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+  dialog::backdrop { background: rgba(15, 20, 30, .35); }
+  dialog form { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  dialog h3 { margin: 0; font-size: 15px; }
+  .seg { display: flex; gap: 6px; }
+  .seg label { flex-direction: row; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; color: var(--text); font-size: 13px; cursor: pointer; }
+  .seg input { width: auto; }
+  .dlg-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+  .dlg-actions .left { margin-right: auto; }
+  .hint { font-size: 12px; color: #344054; background: #f6f7fa; border-radius: 6px; padding: 6px 8px; min-height: 30px; }
+
+  #print-root { display: none; }
+  @media (max-width: 760px) {
+    .shell { grid-template-columns: 1fr; }
+    aside { border-right: none; border-bottom: 1px solid var(--line); display: flex; overflow-x: auto; gap: 4px; }
+    aside button { width: auto; white-space: nowrap; }
+    aside hr { display: none; }
+  }
+  @media print {
+    @page { size: A4 landscape; margin: 10mm; }
+    body { background: #fff; }
+    header, .groups, .shell, dialog { display: none !important; }
+    #print-root { display: block; }
+    .pdoc { page-break-after: always; font-family: "Times New Roman", serif; font-size: 11pt; }
+    .pdoc:last-child { page-break-after: auto; }
+    .plan { min-width: 0; font-size: 9.5pt; }
+    .plan td.m { width: 34px; font-size: 8pt; padding: 2px; }
+    .plan td.num { width: 40px; }
+    .plan tfoot { display: table-row-group; }
+    .plan td.u { background: var(--blue) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .plan td.d { background: var(--green) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    thead { display: table-header-group; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Цэцэрлэгийн жилийн төлөвлөгөө <span class="sub" id="hdr-sub"></span></h1>
+  <button class="btn" id="btn-print">Хэвлэх / PDF</button>
+  <button class="btn primary" id="btn-word">Word татах</button>
+  <button class="btn" id="btn-json">JSON хадгалах</button>
+  <label class="btn" style="flex-direction:row;color:inherit;font-size:14px">JSON нээх<input type="file" id="file-json" accept=".json" hidden></label>
+</header>
+
+<div class="groups" id="groups"></div>
+
+<div class="shell">
+  <aside id="nav"></aside>
+  <div class="content" id="content"></div>
+</div>
+
+<div id="print-root"></div>
+
+<!-- Сарын нүд засах -->
+<dialog id="dlg-cell">
+  <form method="dialog">
+    <h3 id="cell-title"></h3>
+    <div class="seg">
+      <label><input type="radio" name="t" value=""> Хэрэгжүүлэхгүй</label>
+      <label><input type="radio" name="t" value="d"><span class="sw" style="background:var(--green)"></span>Давтамж</label>
+      <label><input type="radio" name="t" value="u"><span class="sw" style="background:var(--blue)"></span>Уялдаа</label>
+    </div>
+    <div id="cell-link">
+      <label>Уялдах суралцахуйн үр дүн (бусад чиглэлээс)
+        <select id="cell-code"></select>
+      </label>
+      <div class="hint" id="cell-hint"></div>
+    </div>
+    <div class="dlg-actions">
+      <button class="btn" value="cancel" formnovalidate>Болих</button>
+      <button class="btn primary" value="ok">Хадгалах</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Мөр засах -->
+<dialog id="dlg-row">
+  <form method="dialog">
+    <h3 id="row-title">Суралцахуйн үр дүн</h3>
+    <label>Ай<input id="row-area" list="dl-areas" required></label>
+    <label>Дэд ай<input id="row-sub" list="dl-subs" required></label>
+    <label>Код<input id="row-code" placeholder="ж: НСХ1.1а" required></label>
+    <label>Суралцахуйн үр дүн<textarea id="row-text" rows="3" required></textarea></label>
+    <datalist id="dl-areas"></datalist><datalist id="dl-subs"></datalist>
+    <div class="dlg-actions">
+      <button class="btn danger left" value="delete" id="row-del" formnovalidate>Устгах</button>
+      <button class="btn" value="up" id="row-up" formnovalidate>↑</button>
+      <button class="btn" value="down" id="row-down" formnovalidate>↓</button>
+      <button class="btn" value="cancel" formnovalidate>Болих</button>
+      <button class="btn primary" value="ok">Хадгалах</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+const ORIGINAL = /*__PLAN_DATA__*/null;
+(() => {
+  const KEY = 'kg-annual-plan-v1';
+  const MONTHS = ORIGINAL.months;               // ['09',...,'05']
+  const TERMS = [['1 улирал', 3], ['2 улирал', 3], ['3 улирал', 3]];
+  const ABBR = { 'НИЙГЭМ-СЭТГЭЛ ХӨДЛӨЛ': 'НСХ', 'ХӨДӨЛГӨӨН, ЭРҮҮЛ МЭНД': 'ХЭМ', 'ХЭЛ ЯРИА': 'ХЯ',
+                 'БАЙГАЛЬ, НИЙГМИЙН ОРЧИН': 'БНО', 'МАТЕМАТИК': 'МАТ', 'ЗУРАГ, УРЛАЛ': 'ЗУ', 'ХӨГЖИМ': 'ХӨГ' };
+  const clone = o => JSON.parse(JSON.stringify(o));
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const $ = s => document.querySelector(s);
+
+  let data;
+  try { data = JSON.parse(localStorage.getItem(KEY)) || clone(ORIGINAL); } catch { data = clone(ORIGINAL); }
+  const ui = { g: 0, view: 'overview' };   // view: 'overview' | 'info' | direction index
+  try { Object.assign(ui, JSON.parse(localStorage.getItem(KEY + ':ui')) || {}); } catch {}
+  if (!data.groups[ui.g]) ui.g = 0;
+
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch {} };
+  const saveUi = () => { try { localStorage.setItem(KEY + ':ui', JSON.stringify(ui)); } catch {} };
+
+  const G = () => data.groups[ui.g];
+  const title = s => s ? s.charAt(0) + s.slice(1).toLowerCase() : s;
+  const count = (rows, t) => rows.reduce((s, r) => s + r.months.filter(m => m.t === t).length, 0);
+
+  // Бүлгийн бүх үр дүнгийн индекс (уялдаа сонгох, шалгахад)
+  function outcomeIndex(g) {
+    const map = new Map();
+    g.directions.forEach((d, di) => d.rows.forEach(r => r.code && map.set(r.code, { text: r.text, dir: d.name, di })));
+    return map;
+  }
+
+  function issues(g, di) {
+    const idx = outcomeIndex(g), out = [];
+    g.directions[di].rows.forEach(r => {
+      if (!r.months.some(m => m.t)) out.push(`${r.code} — аль ч сард төлөвлөгдөөгүй байна.`);
+      r.months.forEach((m, i) => {
+        if (m.t === 'u' && !m.code) out.push(`${r.code} — ${MONTHS[i]} сарын уялдаанд код сонгоогүй.`);
+        else if (m.t === 'u' && !idx.has(m.code)) out.push(`${r.code} — ${MONTHS[i]} сарын уялдаа “${m.code}” энэ бүлгийн төлөвлөгөөнд олдсонгүй.`);
+      });
+    });
+    return out;
+  }
+
+  // ---------- рендер ----------
+  function render() {
+    saveUi();
+    const g = G();
+    $('#hdr-sub').textContent = `${title(g.school)} · ${g.year} оны хичээлийн жил`;
+    $('#groups').innerHTML = data.groups.map((x, i) =>
+      `<button data-g="${i}" class="${i === ui.g ? 'active' : ''}"><b>${title(x.name)} бүлэг</b><span>${esc(x.level)}</span></button>`).join('');
+    $('#groups').querySelectorAll('button').forEach(b => b.onclick = () => { ui.g = +b.dataset.g; render(); });
+
+    $('#nav').innerHTML = `
+      <button data-v="overview" class="${ui.view === 'overview' ? 'active' : ''}">Тойм</button>
+      <button data-v="info" class="${ui.view === 'info' ? 'active' : ''}">Ерөнхий мэдээлэл</button><hr>` +
+      g.directions.map((d, i) => `<button data-v="${i}" class="${ui.view === i ? 'active' : ''}">${esc(title(d.name))}<small>${d.rows.length}</small></button>`).join('');
+    $('#nav').querySelectorAll('button').forEach(b => b.onclick = () => {
+      ui.view = /^\d+$/.test(b.dataset.v) ? +b.dataset.v : b.dataset.v; render();
+    });
+
+    if (ui.view === 'overview') renderOverview();
+    else if (ui.view === 'info') renderInfo();
+    else renderDirection(ui.view);
+  }
+
+  function renderOverview() {
+    const g = G();
+    const allRows = g.directions.flatMap(d => d.rows);
+    const monthLoad = MONTHS.map((_, i) => allRows.filter(r => r.months[i].t).length);
+    const maxLoad = Math.max(1, ...monthLoad);
+    $('#content').innerHTML = `
+      <h2>${title(g.name)} бүлэг — тойм</h2>
+      <p class="muted">${esc(g.level)} · Багш: ${esc(g.teacher)}</p>
+      <div class="cards">
+        <div class="card"><div class="v">${g.directions.length}</div><div class="l">Чиглэл</div></div>
+        <div class="card"><div class="v">${allRows.length}</div><div class="l">Суралцахуйн үр дүн</div></div>
+        <div class="card"><div class="v">${count(allRows, 'u')}</div><div class="l"><span class="sw" style="background:var(--blue)"></span>Уялдаа</div></div>
+        <div class="card"><div class="v">${count(allRows, 'd')}</div><div class="l"><span class="sw" style="background:var(--green)"></span>Давтамж</div></div>
+      </div>
+      <div class="scroll"><table class="sum">
+        <thead><tr><th>Чиглэл</th><th>Үр дүн</th>${MONTHS.map(m => `<th>${m} сар</th>`).join('')}<th>Уялдаа</th><th>Давтамж</th><th>Анхааруулга</th></tr></thead>
+        <tbody>${g.directions.map((d, di) => {
+          const iss = issues(g, di).length;
+          return `<tr><td><a href="#" data-open="${di}">${esc(title(d.name))}</a></td><td>${d.rows.length}</td>${
+            MONTHS.map((_, i) => `<td>${d.rows.filter(r => r.months[i].t).length || ''}</td>`).join('')
+          }<td>${count(d.rows, 'u')}</td><td>${count(d.rows, 'd')}</td><td style="color:${iss ? 'var(--warn)' : 'inherit'}">${iss || '—'}</td></tr>`;
+        }).join('')}</tbody>
+        <tfoot><tr><td><b>Сарын ачаалал</b></td><td><b>${allRows.length}</b></td>${monthLoad.map(n =>
+          `<td style="background:rgba(36,87,197,${(0.08 + 0.42 * n / maxLoad).toFixed(2)})"><b>${n}</b></td>`).join('')}<td><b>${count(allRows, 'u')}</b></td><td><b>${count(allRows, 'd')}</b></td><td></td></tr></tfoot>
+      </table></div>
+      <p class="muted">Сарын ачаалал = тухайн сард хэрэгжүүлэх (уялдаа эсвэл давтамжтай) суралцахуйн үр дүнгийн тоо.</p>`;
+    $('#content').querySelectorAll('[data-open]').forEach(a => a.onclick = e => { e.preventDefault(); ui.view = +a.dataset.open; render(); });
+  }
+
+  function renderInfo() {
+    const g = G();
+    const fields = [['school', 'Байгууллагын нэр (томоор)'], ['year', 'Хичээлийн жил'], ['name', 'Бүлэг'], ['level', 'Хөтөлбөрийн түвшин'],
+      ['teacher', 'Боловсруулсан багш'], ['approver', 'Баталсан (эрхлэгч / орлон гүйцэтгэгч)'], ['date', 'Огноо'], ['place', 'Газар']];
+    $('#content').innerHTML = `
+      <h2>${title(g.name)} бүлэг — ерөнхий мэдээлэл</h2>
+      <p class="muted">Эдгээр нь хэвлэх болон Word файлын толгой, гарын үсгийн хэсэгт гарна.</p>
+      <div class="info-grid">${fields.map(([k, l]) => `<label>${l}<input data-k="${k}" value="${esc(g[k])}"></label>`).join('')}</div>
+      <div class="toolbar" style="margin-top:16px">
+        <button class="btn" id="apply-all">Байгууллага, он, батлагчийг бүх бүлэгт хэрэглэх</button>
+        <button class="btn danger" id="reset-group">Энэ бүлгийг анхны файлын хувилбар руу буцаах</button>
+      </div>`;
+    $('#content').querySelectorAll('[data-k]').forEach(el => el.oninput = () => { g[el.dataset.k] = el.value; save(); });
+    $('#apply-all').onclick = () => {
+      data.groups.forEach(x => ['school', 'year', 'approver', 'date', 'place'].forEach(k => x[k] = g[k])); save(); render();
+    };
+    $('#reset-group').onclick = () => {
+      const orig = ORIGINAL.groups.find(x => x.name === g.name);
+      if (orig && confirm(`${title(g.name)} бүлгийн бүх өөрчлөлтийг устгах уу?`)) { data.groups[ui.g] = clone(orig); save(); render(); }
+    };
+  }
+
+  function planTable(g, d, editable) {
+    // Ай, Дэд айн rowspan
+    const rows = d.rows;
+    const span = (key, i) => {
+      if (i > 0 && rows[i - 1][key] === rows[i][key] && (key === 'area' || rows[i - 1].area === rows[i].area)) return 0;
+      let n = 1; while (i + n < rows.length && rows[i + n][key] === rows[i][key] && (key === 'area' || rows[i + n].area === rows[i].area)) n++;
+      return n;
+    };
+    const body = rows.map((r, ri) => {
+      const sa = span('area', ri), ss = span('sub', ri);
+      const links = r.months.map((m, i) => m.t === 'u' && m.code ? `<li>${MONTHS[i]} сар – ${esc(m.code)}. ${esc(m.text)}</li>` : '').join('');
+      return `<tr class="row">
+        ${sa ? `<td rowspan="${sa}">${esc(r.area)}</td>` : ''}
+        ${ss ? `<td rowspan="${ss}">${esc(r.sub)}</td>` : ''}
+        <td class="out" ${editable ? `data-row="${ri}" title="Засах"` : ''}><span class="code">${esc(r.code)}.</span> ${esc(r.text)}
+          ${links ? `<div class="lnk-h">Уялдах суралцахуйн үр дүн:</div><ul>${links}</ul>` : ''}</td>
+        ${r.months.map((m, i) => `<td class="m ${m.t}" ${editable ? `data-cell="${ri}:${i}"` : ''}>${m.t === 'u' ? esc(m.code) : ''}</td>`).join('')}
+        <td class="num">${r.months.filter(m => m.t === 'u').length}</td>
+        <td class="num">${r.months.filter(m => m.t === 'd').length}</td></tr>`;
+    }).join('');
+    return `<table class="plan">
+      <thead>
+        <tr><th rowspan="2" style="width:110px">Ай</th><th rowspan="2" style="width:120px">Дэд ай</th><th rowspan="2">Суралцахуйн үр дүн</th>
+          ${TERMS.map(([n, c]) => `<th colspan="${c}">${n}</th>`).join('')}<th rowspan="2">Уялдаа</th><th rowspan="2">Давтамж</th></tr>
+        <tr>${MONTHS.map(m => `<th>${m}<br>сар</th>`).join('')}</tr>
+      </thead>
+      <tbody>${body}</tbody>
+      <tfoot>
+        <tr><td colspan="${3 + MONTHS.length}" style="text-align:right">Уялдаа</td><td class="num" colspan="2">${count(rows, 'u')}</td></tr>
+        <tr><td colspan="${3 + MONTHS.length}" style="text-align:right">Давтамж</td><td class="num" colspan="2">${count(rows, 'd')}</td></tr>
+      </tfoot></table>`;
+  }
+
+  const LEGEND = `<div class="legend"><span><span class="sw" style="background:var(--blue)"></span>Уялдаа — бусад чиглэлийн суралцахуйн үр дүнтэй уялдуулах сар</span>
+    <span><span class="sw" style="background:var(--green)"></span>Давтамж — давтан хэрэгжүүлэх сар</span></div>`;
+
+  function renderDirection(di) {
+    const g = G(), d = g.directions[di];
+    if (!d) { ui.view = 'overview'; return render(); }
+    const iss = issues(g, di);
+    $('#content').innerHTML = `
+      <h2>“${esc(d.name)}” чиглэл</h2>
+      <p class="muted">${title(g.name)} бүлэг · ${esc(g.level)}. Сарын нүдэн дээр дарж уялдаа/давтамж тохируулна, үр дүнгийн текст дээр дарж засна.</p>
+      <div class="toolbar"><span class="grow">${LEGEND}</span>
+        <button class="btn" id="add-row">+ Үр дүн нэмэх</button>
+        <button class="btn" id="print-one">Энэ чиглэлийг хэвлэх</button></div>
+      ${iss.length ? `<div class="warn-box"><b>Анхааруулга (${iss.length})</b><ul>${iss.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
+      <div class="scroll">${planTable(g, d, true)}</div>`;
+    $('#content').querySelectorAll('[data-cell]').forEach(td => td.onclick = () => {
+      const [ri, mi] = td.dataset.cell.split(':').map(Number); editCell(di, ri, mi);
+    });
+    $('#content').querySelectorAll('[data-row]').forEach(td => td.onclick = () => editRow(di, +td.dataset.row));
+    $('#add-row').onclick = () => editRow(di, -1);
+    $('#print-one').onclick = () => doPrint([di]);
+  }
+
+  // ---------- засварлах ----------
+  function editCell(di, ri, mi) {
+    const g = G(), d = g.directions[di], r = d.rows[ri], m = r.months[mi];
+    const dlg = $('#dlg-cell'), form = dlg.querySelector('form');
+    $('#cell-title').textContent = `${r.code} · ${MONTHS[mi]} сар`;
+    form.t.value = m.t;
+    const idx = outcomeIndex(g);
+    const opts = g.directions.map((x, xi) => xi === di ? '' :
+      `<optgroup label="${esc(title(x.name))}">${x.rows.map(o => `<option value="${esc(o.code)}">${esc(o.code)}. ${esc(o.text.slice(0, 80))}</option>`).join('')}</optgroup>`).join('');
+    const sel = $('#cell-code');
+    sel.innerHTML = `<option value="">— сонгох —</option>` + opts +
+      (m.code && !idx.has(m.code) ? `<option value="${esc(m.code)}">${esc(m.code)} (жагсаалтад байхгүй)</option>` : '');
+    sel.value = m.code || '';
+    const sync = () => {
+      $('#cell-link').style.display = form.t.value === 'u' ? '' : 'none';
+      const o = idx.get(sel.value);
+      $('#cell-hint').textContent = o ? `${title(o.dir)}: ${o.text}` : (sel.value ? m.text : 'Уялдуулах үр дүнгээ сонгоно уу.');
+    };
+    form.querySelectorAll('input[name=t]').forEach(x => x.onchange = sync);
+    sel.onchange = sync; sync();
+    dlg.onclose = () => {
+      if (dlg.returnValue !== 'ok') return;
+      const t = form.t.value;
+      if (t === 'u') {
+        const o = idx.get(sel.value);
+        r.months[mi] = { t: 'u', code: sel.value, text: o ? o.text : (sel.value === m.code ? m.text : '') };
+      } else r.months[mi] = { t };
+      save(); render();
+    };
+    dlg.returnValue = ''; dlg.showModal();
+  }
+
+  function editRow(di, ri) {
+    const g = G(), d = g.directions[di], isNew = ri < 0;
+    const r = isNew ? { area: d.rows.at(-1)?.area || '', sub: '', code: '', text: '', months: MONTHS.map(() => ({ t: '' })) } : d.rows[ri];
+    const dlg = $('#dlg-row');
+    $('#row-title').textContent = isNew ? 'Шинэ суралцахуйн үр дүн' : `${r.code} засах`;
+    $('#row-area').value = r.area; $('#row-sub').value = r.sub; $('#row-code').value = r.code; $('#row-text').value = r.text;
+    if (isNew) $('#row-code').placeholder = `ж: ${ABBR[d.name] || ''}1.1а`;
+    $('#dl-areas').innerHTML = [...new Set(d.rows.map(x => x.area))].map(a => `<option value="${esc(a)}">`).join('');
+    $('#dl-subs').innerHTML = [...new Set(d.rows.map(x => x.sub))].map(a => `<option value="${esc(a)}">`).join('');
+    ['row-del', 'row-up', 'row-down'].forEach(id => $('#' + id).style.display = isNew ? 'none' : '');
+    dlg.onclose = () => {
+      const v = dlg.returnValue;
+      if (v === 'ok') {
+        const oldCode = r.code;
+        Object.assign(r, { area: $('#row-area').value.trim(), sub: $('#row-sub').value.trim(), code: $('#row-code').value.trim(), text: $('#row-text').value.trim() });
+        if (isNew) d.rows.push(r);
+        // Код/текст өөрчлөгдвөл бусад чиглэлийн уялдааг шинэчилнэ
+        g.directions.forEach(x => x.rows.forEach(y => y.months.forEach(m => {
+          if (m.t === 'u' && m.code === oldCode && oldCode) { m.code = r.code; m.text = r.text; }
+        })));
+      } else if (v === 'delete') {
+        if (!confirm(`${r.code} үр дүнг устгах уу?`)) return;
+        d.rows.splice(ri, 1);
+      } else if (v === 'up' || v === 'down') {
+        const j = ri + (v === 'up' ? -1 : 1);
+        if (j >= 0 && j < d.rows.length) [d.rows[ri], d.rows[j]] = [d.rows[j], d.rows[ri]];
+      } else return;
+      save(); render();
+    };
+    dlg.returnValue = ''; dlg.showModal();
+  }
+
+  // ---------- хэвлэх / Word ----------
+  function docHtml(g, dirIdx) {
+    return dirIdx.map(di => {
+      const d = g.directions[di];
+      return `<div class="pdoc">
+        <table style="width:100%;border:none;margin-bottom:6pt"><tr>
+          <td style="border:none"></td>
+          <td style="border:none;width:45%;font-weight:bold">БАТЛАВ<br>ЦЭЦЭРЛЭГИЙН ЭРХЛЭГЧИЙГ<br>ОРЛОН ГҮЙЦЭТГЭГЧ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${esc(g.approver)}<br>${esc((g.year || '').slice(0, 4))} оны ..... сарын ..... өдөр</td></tr></table>
+        <p style="text-align:center;font-weight:bold;margin:6pt 0">${esc(g.school)} ${esc(g.year)} ОНЫ ХИЧЭЭЛИЙН ЖИЛИЙН ${esc(g.name)} БҮЛГИЙН “${esc(d.name)}” ЧИГЛЭЛИЙН СУРГАЛТЫН ҮЙЛ АЖИЛЛАГААНЫ ТӨЛӨВЛӨГӨӨ</p>
+        <table style="width:100%;border:none"><tr><td style="border:none">${esc(g.date)}</td><td style="border:none;text-align:right">${esc(g.place)}</td></tr></table>
+        ${planTable(g, d, false)}
+        <p style="font-size:9pt">Тайлбар: Уялдаа – цэнхэр (бусад чиглэлийн суралцахуйн үр дүнтэй уялдуулах сар; уялдах үр дүнгийн агуулгыг тухайн мөрийн доор бичив); Давтамж – ногоон (давтан хэрэгжүүлэх сар).</p>
+        <p style="font-size:9pt">Суралцахуйн үр дүнг "Сургуулийн өмнөх боловсролын сургалтын хөтөлбөр" (2025)-ийн ${esc(g.level)}-ээс авав.</p>
+        <p style="font-weight:bold;margin-top:14pt">БОЛОВСРУУЛСАН<br>БАГШ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${esc(g.teacher)}</p>
+      </div>`;
+    }).join('');
+  }
+
+  function doPrint(dirIdx) {
+    const g = G();
+    $('#print-root').innerHTML = docHtml(g, dirIdx || g.directions.map((_, i) => i));
+    window.print();
+  }
+
+  function exportWord() {
+    const g = G();
+    const css = `@page WordSection1 { size: 841.9pt 595.3pt; mso-page-orientation: landscape; margin: 36pt 36pt 36pt 36pt; }
+      div.WordSection1 { page: WordSection1; }
+      body { font-family: "Times New Roman", serif; font-size: 11pt; }
+      table.plan { border-collapse: collapse; width: 100%; font-size: 9.5pt; }
+      .plan th, .plan td { border: 1px solid #000; padding: 2pt 4pt; vertical-align: top; }
+      .plan th { background: #F2F2F2; text-align: center; }
+      .plan td.m, .plan td.num { text-align: center; vertical-align: middle; }
+      .plan td.u { background: #B4C6E7; } .plan td.d { background: #C5E0B3; }
+      .plan ul { margin: 0; } .lnk-h { font-style: italic; }`;
+    const body = g.directions.map((_, i) => docHtml(g, [i])).join('<br clear=all style="page-break-before:always">');
+    // Word-д class-аар background ажиллахгүй тохиолдолд inline өнгө нэмэх
+    const html = body.replace(/<td class="m u"/g, '<td class="m u" style="background:#B4C6E7"')
+                     .replace(/<td class="m d"/g, '<td class="m d" style="background:#C5E0B3"');
+    const doc = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+      <head><meta charset="utf-8"><title>${esc(g.name)} бүлэг</title><style>${css}</style></head>
+      <body><div class="WordSection1">${html}</div></body></html>`;
+    download('﻿' + doc, `${title(g.name)}_булэг_${g.year}_төлөвлөгөө.doc`, 'application/msword');
+  }
+
+  function download(text, name, type) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([text], { type }));
+    a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+  }
+
+  $('#btn-print').onclick = () => doPrint();
+  $('#btn-word').onclick = exportWord;
+  $('#btn-json').onclick = () => download(JSON.stringify(data, null, 1), `tsetserleg_tolovlogoo_${G().year}.json`, 'application/json');
+  $('#file-json').onchange = async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try {
+      const x = JSON.parse(await f.text());
+      if (!Array.isArray(x.groups) || !x.groups.every(g => Array.isArray(g.directions))) throw 0;
+      data = Object.assign({ months: MONTHS }, x); ui.g = 0; ui.view = 'overview'; save(); render();
+    } catch { alert('JSON файл буруу байна.'); }
+    e.target.value = '';
+  };
+
+  render();
+})();
+</script>
+</body>
+</html>
