@@ -339,7 +339,13 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
   if (!data.groups[ui.g]) ui.g = 0;
   // Өмнөх хувилбарын өгөгдөлд сарын төлөвлөлт байхгүй бол нэмнэ
   data.groups.forEach(g => {
-    if (!g.monthly) g.monthly = clone(ORIGINAL.groups.find(o => o.name === g.name)?.monthly || {});
+    g.monthly = g.monthly || {};
+    const om = ORIGINAL.groups.find(o => o.name === g.name)?.monthly || {};
+    // Шинээр нэмэгдсэн сарыг нэмнэ (хэрэглэгчийн бичсэн сарыг дарахгүй)
+    Object.keys(om).forEach(k => {
+      const cur = g.monthly[k];
+      if (!cur || (!cur.schedule?.length && !cur.readings?.length)) g.monthly[k] = clone(om[k]);
+    });
   });
   if (!MONTHS.includes(ui.month)) {
     const cm = String(new Date().getMonth() + 1).padStart(2, '0');
@@ -689,7 +695,11 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
     });
     return [...out.u, ...out.d];
   }
-  const daysText = f => [f.dates.join(', '), f.note].filter(Boolean).join(', ');
+  // Хуваариас гарсан өдөр + гараар нэмсэн өдөр (эрэмбэлж) + бусад тэмдэглэл (ж: Өдөр бүр)
+  function daysText(f) {
+    const toks = (f.note || '').split(',').map(t => t.trim()).filter(Boolean), isD = t => /^\d\d\.\d\d$/.test(t);
+    return [...[...new Set([...f.dates, ...toks.filter(isD)])].sort(), ...toks.filter(t => !isD(t))].join(', ');
+  }
 
   function linkOptions(g, sel, exclude) {
     return `<option value="">—</option>` + g.directions.map(d =>
@@ -750,9 +760,9 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
           <td><select data-link="${esc(x.code)}">${linkOptions(g, x.link, x.code)}</select></td>
           <td class="c"><span class="badge ${x.t}">${x.t === 'u' ? 'Уялдаа' : 'Давтамж'}</span></td>
           <td><div class="dates">${x.dates.map(d => `<span>${d}</span>`).join('') || '<em>хуваарьт алга</em>'}</div>
-              <input data-note="${esc(x.code)}" value="${esc(x.note)}" placeholder="нэмэлт: Өдөр бүр"></td>
+              <input data-note="${esc(x.code)}" value="${esc(x.note)}" placeholder="нэмэлт өдөр: 01.04 эсвэл Өдөр бүр"></td>
           <td>${dem(g.directions.find(d => d.name === x.dir) || {})} ${esc(title(x.dir))}</td></tr>`).join('')}</tbody></table></div>
-      <p class="muted">Хэрэгжүүлэх өдрийг “Хуваарь”-аас автоматаар (үндсэн болон уялдаа байдлаар орсон өдрүүд) бөглөнө.</p>`;
+      <p class="muted">Хэрэгжүүлэх өдрийг “Хуваарь”-аас автоматаар (үндсэн болон уялдаа байдлаар орсон өдрүүд) бөглөнө. Бусад өдөр давтан хэрэгжүүлэх бол доорх нүдэнд “02.16, 02.17” эсвэл “Өдөр бүр” гэж нэмж бичнэ.</p>`;
     $('#m-apt').oninput = e => { mo.approverTitle = e.target.value; save(); };
     $('#m-ap').oninput = e => { mo.approver = e.target.value; save(); };
     box.querySelectorAll('[data-ex]').forEach(c => c.onchange = () => {

@@ -1,6 +1,6 @@
 """Сарын төлөвлөлтийн (.docx) загвараас өгөгдөл задлах.
 
-Хэрэглээ: python3 tools/extract_month.py сарын_төлөвлөлт.docx > data/month-sample.json
+Хэрэглээ: python3 tools/extract_month.py сарын_төлөвлөлт.docx > data/month-ahlah-11.json
 
 Баримтын бүтэц:
   1. Сарын суралцахуйн үр дүн, уялдааны шүүлт
@@ -54,7 +54,7 @@ def parse(path):
             m = re.match(r'^БАТЛАВ\s+(\S+)\s+(\S+)', t)
             if m and not out['approver']:
                 out['approverTitle'], out['approver'] = m.group(1), m.group(2)
-            m = re.search(r'ЦЭЦЭРЛЭГИЙН (\S+) БҮЛГИЙН (\d{4}) ОНЫ (\d+) ДУГААР САРЫН СУРАЛЦАХУЙН', t)
+            m = re.search(r'ЦЭЦЭРЛЭГИЙН (\S+) БҮЛГИЙН (\d{4}) ОНЫ (\d+) (?:ДУГААР|ДҮГЭЭР) САРЫН СУРАЛЦАХУЙН', t)
             if m:
                 out['group'], out['year'], out['month'] = m.group(1), m.group(2), m.group(3).zfill(2)
                 mode = 'filter'

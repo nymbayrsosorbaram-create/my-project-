@@ -5,14 +5,19 @@ tpl = (root / 'src' / 'app.html').read_text(encoding='utf-8')
 data = json.loads((root / 'data' / 'plan-data.json').read_text(encoding='utf-8'))
 
 
+def extra_days(f, schedule):
+    """Хуваариас автоматаар гарахгүй, гараар бичсэн өдөр/тэмдэглэл (ж: 'Өдөр бүр', '01.04')."""
+    auto = {d['date'][5:].replace('-', '.') for d in schedule if d['code'] == f['code'] or d['link'] == f['code']}
+    return ', '.join(t for t in (x.strip() for x in f['days'].split(',')) if t and t not in auto)
+
+
 def month_from_sample(s):
     """extract_month.py-ийн гаралтыг системийн сарын бүтэц рүү хөрвүүлэх."""
-    date_like = re.compile(r'^\s*\d\d\.\d\d(\s*,\s*\d\d\.\d\d)*\s*$')
     return {
         'approverTitle': s['approverTitle'], 'approver': s['approver'],
         'exclude': sorted({'ХӨГЖИМ'}),
         'links': {f['code']: f['link'] for f in s['filter']},
-        'notes': {f['code']: f['days'] for f in s['filter'] if f['days'] and not date_like.match(f['days'])},
+        'notes': {code: note for code, note in ((f['code'], extra_days(f, s['schedule'])) for f in s['filter']) if note},
         'schedule': [{'date': d['date'], 'code': d['code'], 'link': d['link']} for d in s['schedule']],
         'acts': {a['date']: {k: a[k] for k in ('method', 'link', 'competence', 'materials', 'criteria', 'steps')}
                  for a in s['acts']},
