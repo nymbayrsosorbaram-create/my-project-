@@ -177,8 +177,57 @@
   .dlg-actions .left { margin-right: auto; }
   .hint { font-size: 13px; background: #fff; border: 2px dashed var(--ink); border-radius: 12px; padding: 8px 10px; min-height: 34px; }
 
+  /* Сарын төлөвлөлт */
+  aside button.month-nav { background: #ffe0ec; border-color: var(--ink); }
+  aside button.month-nav.active { background: var(--pink); }
+  .mchips { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+  .mchips button { position: relative; width: 62px; border: 2.5px solid var(--ink); border-radius: 16px; background: #fff; padding: 6px 0; cursor: pointer; box-shadow: var(--sh-sm); line-height: 1.1; }
+  .mchips button b { display: block; font-size: 18px; font-weight: 900; }
+  .mchips button span { font-size: 11px; color: var(--muted); }
+  .mchips button i { position: absolute; top: -9px; right: -8px; background: var(--pink); border: 2px solid var(--ink); border-radius: 999px; font-style: normal; font-size: 11px; font-weight: 900; padding: 0 6px; }
+  .mchips button.active { background: var(--yellow); transform: translateY(-2px); }
+  .subtabs { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; border-bottom: 3px solid var(--ink); padding-bottom: 8px; margin-bottom: 14px; }
+  .subtabs button[data-t] { border: 2.5px solid var(--ink); background: #fff; border-radius: 14px; padding: 7px 14px; cursor: pointer; font-weight: 800; }
+  .subtabs button[data-t] small { background: var(--paper); border: 2px solid var(--ink); border-radius: 999px; padding: 0 6px; font-size: 11px; margin-left: 2px; }
+  .subtabs button.active { background: var(--lilac); box-shadow: var(--sh-sm); }
+  .subtabs .grow { flex: 1; }
+  .mcard { border: 3px solid var(--ink); border-radius: var(--r); background: #fff; padding: 14px; box-shadow: var(--sh); margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .formgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-bottom: 4px; }
+  .chk { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-weight: 800; font-size: 13px; }
+  .chk label { flex-direction: row; align-items: center; gap: 5px; border: 2px solid var(--ink); border-radius: 999px; padding: 3px 10px; background: var(--paper); font-size: 12px; }
+  .chk input { width: auto; }
+  table.mt { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 760px; border: 3px solid var(--ink); border-radius: var(--r); overflow: hidden; background: #fff; box-shadow: var(--sh); font-size: 13px; }
+  .mt th { background: var(--lilac); font-weight: 900; padding: 8px; border-bottom: 2.5px solid var(--ink); text-align: left; }
+  .mt td { padding: 6px 8px; border-bottom: 1.5px solid #e2d9f0; vertical-align: top; }
+  .mt td.c { text-align: center; vertical-align: middle; }
+  .mt tbody tr:nth-child(even) td { background: #fbf7ff; }
+  .mt td input, .mt td select, .mt td textarea { padding: 5px 7px; border-width: 2px; border-radius: 10px; font-size: 13px; }
+  .mt .code { background: var(--yellow); border: 2px solid var(--ink); border-radius: 8px; padding: 0 5px; font-weight: 900; }
+  .badge { display: inline-block; border: 2px solid var(--ink); border-radius: 999px; padding: 1px 9px; font-size: 12px; font-weight: 900; }
+  .badge.u { background: var(--u-ui); } .badge.d { background: var(--d-ui); }
+  .dates { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 4px; font-size: 12px; }
+  .dates span { background: var(--sky); border: 2px solid var(--ink); border-radius: 8px; padding: 0 5px; font-weight: 900; }
+  .dates em { color: var(--muted); }
+  .act-layout { display: grid; grid-template-columns: 170px 1fr; gap: 16px; align-items: start; }
+  .act-list { display: flex; flex-direction: column; gap: 5px; position: sticky; top: 8px; max-height: 80vh; overflow: auto; padding: 2px 6px 6px 2px; }
+  .act-list button { display: grid; grid-template-columns: 22px 44px 1fr; grid-template-rows: auto auto; align-items: center; text-align: left; border: 2.5px solid var(--ink); border-radius: 14px; background: #fff; padding: 5px 8px; cursor: pointer; }
+  .act-list button b { font-size: 15px; font-weight: 900; } .act-list button small { color: var(--muted); }
+  .act-list button em { grid-column: 2 / 4; font-style: normal; font-size: 11px; color: var(--muted); font-weight: 800; }
+  .act-list button.active { background: var(--yellow); box-shadow: var(--sh-sm); }
+  .act-edit { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .act-head { display: flex; gap: 10px; flex-wrap: wrap; }
+  .act-head > div { flex: 1; min-width: 140px; border: 3px solid var(--ink); border-radius: 16px; background: #fff3b0; padding: 8px 12px; box-shadow: var(--sh-sm); }
+  .act-head > div:nth-child(2) { background: #d6e9ff; } .act-head > div:nth-child(3) { background: #ffd6e0; }
+  .act-head small { display: block; font-size: 11px; color: var(--muted); font-weight: 800; }
+  .ro { border: 2.5px dashed var(--ink); border-radius: 12px; padding: 7px 10px; background: #fff; font-weight: 700; color: var(--ink); font-size: 13px; }
+  h3.sec { font-size: 16px; font-weight: 900; margin: 12px 0 4px; }
+  textarea.ag { resize: vertical; overflow: hidden; min-height: 38px; }
+  .mt.steps td { background: #fff !important; }
   #print-root { display: none; }
   @media (max-width: 760px) {
+    .act-layout { grid-template-columns: 1fr; }
+    .act-list { flex-direction: row; position: static; overflow-x: auto; max-height: none; }
+    .act-list button { min-width: 120px; }
     header { padding-right: 16px; }
     header::before { width: 90px; height: 90px; right: -35px; top: -45px; }
     header h1 { font-size: 19px; width: 100%; padding-right: 50px; }
@@ -288,6 +337,15 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
   const ui = { g: 0, view: 'overview' };   // view: 'overview' | 'info' | direction index
   try { Object.assign(ui, JSON.parse(localStorage.getItem(KEY + ':ui')) || {}); } catch {}
   if (!data.groups[ui.g]) ui.g = 0;
+  // Өмнөх хувилбарын өгөгдөлд сарын төлөвлөлт байхгүй бол нэмнэ
+  data.groups.forEach(g => {
+    if (!g.monthly) g.monthly = clone(ORIGINAL.groups.find(o => o.name === g.name)?.monthly || {});
+  });
+  if (!MONTHS.includes(ui.month)) {
+    const cm = String(new Date().getMonth() + 1).padStart(2, '0');
+    ui.month = MONTHS.includes(cm) ? cm : '09';
+  }
+  ui.mtab = ui.mtab || 'filter';
 
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch {} };
   const saveUi = () => { try { localStorage.setItem(KEY + ':ui', JSON.stringify(ui)); } catch {} };
@@ -327,13 +385,15 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
     $('#nav').innerHTML = `
       <button data-v="overview" class="${ui.view === 'overview' ? 'active' : ''}"><span class="ic">🏠</span><span class="nm">Тойм</span></button>
       <button data-v="info" class="${ui.view === 'info' ? 'active' : ''}"><span class="ic">📝</span><span class="nm">Ерөнхий мэдээлэл</span></button><hr>` +
-      g.directions.map((d, i) => `<button data-v="${i}" class="${ui.view === i ? 'active' : ''}"><span class="ic">${dem(d)}</span><span class="nm">${esc(title(d.name))}</span><small>${d.rows.length}</small></button>`).join('');
+      g.directions.map((d, i) => `<button data-v="${i}" class="${ui.view === i ? 'active' : ''}"><span class="ic">${dem(d)}</span><span class="nm">${esc(title(d.name))}</span><small>${d.rows.length}</small></button>`).join('') +
+      `<hr><button data-v="month" class="month-nav ${ui.view === 'month' ? 'active' : ''}"><span class="ic">✏️</span><span class="nm">Сарын төлөвлөлт, үйл ажиллагаа</span></button>`;
     $('#nav').querySelectorAll('button').forEach(b => b.onclick = () => {
       ui.view = /^\d+$/.test(b.dataset.v) ? +b.dataset.v : b.dataset.v; render();
     });
 
     if (ui.view === 'overview') renderOverview();
     else if (ui.view === 'info') renderInfo();
+    else if (ui.view === 'month') renderMonth();
     else renderDirection(ui.view);
   }
 
@@ -553,15 +613,19 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
     download('﻿' + doc, `${title(g.name)}_булэг_${g.year}_төлөвлөгөө.doc`, 'application/msword');
   }
 
+  // Кирилл нэртэй файлыг зарим хөтөч "download" болгодог тул латинаар бичнэ
+  const TR = { а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'yo',ж:'j',з:'z',и:'i',й:'i',к:'k',л:'l',м:'m',н:'n',о:'o',ө:'u',п:'p',р:'r',с:'s',т:'t',у:'u',ү:'u',ф:'f',х:'h',ц:'ts',ч:'ch',ш:'sh',щ:'sh',ъ:'',ы:'i',ь:'',э:'e',ю:'yu',я:'ya' };
+  const latin = s => s.split('').map(c => { const l = c.toLowerCase(), t = TR[l]; return t == null ? c : (c !== l ? t.charAt(0).toUpperCase() + t.slice(1) : t); }).join('').replace(/[^\w.\-]+/g, '_');
   function download(text, name, type) {
+    name = latin(name);
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([text], { type }));
     a.download = name; document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 1500);
   }
 
-  $('#btn-print').onclick = () => doPrint();
-  $('#btn-word').onclick = exportWord;
+  $('#btn-print').onclick = () => ui.view === 'month' ? printMonth() : doPrint();
+  $('#btn-word').onclick = () => ui.view === 'month' ? exportMonthWord() : exportWord();
   $('#btn-json').onclick = () => download(JSON.stringify(data, null, 1), `tsetserleg_tolovlogoo_${G().year}.json`, 'application/json');
   $('#file-json').onchange = async e => {
     const f = e.target.files[0]; if (!f) return;
@@ -572,6 +636,421 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
     } catch { alert('JSON файл буруу байна.'); }
     e.target.value = '';
   };
+
+  // =====================================================================
+  //  САРЫН ТӨЛӨВЛӨЛТ: шүүлт → хуваарь → үйл ажиллагаа → чанга уншлага
+  // =====================================================================
+  const WD = ['Ням', 'Даваа', 'Мягмар', 'Лхагва', 'Пүрэв', 'Баасан', 'Бямба'];
+  const ORD = { '01': 'дүгээр', '02': 'дугаар', '03': 'дугаар', '04': 'дүгээр', '05': 'дугаар',
+                '09': 'дүгээр', '10': 'дугаар', '11': 'дүгээр', '12': 'дугаар' };
+  const METHODS = ['Зохиолд суурилсан арга', 'Тоглоомонд суурилсан арга', 'Төсөлд суурилсан арга',
+                   'Шинжлэн судлах арга', 'Туршилт хийх арга', 'Асуудал шийдвэрлэх арга', 'Ярилцлагын арга', 'Ажиглалтын арга'];
+  const DEFAULT_STEPS = [
+    ['1000-1020', 'Тойргийн цаг\nҮйл ажиллагаа-1'], ['1020-1045', 'Чиглүүлэгтэй үйл ажиллагаа\nҮйл ажиллагаа-2'],
+    ['1045-1100', 'Чөлөөт тоглоом\nҮйл ажиллагаа-3'], ['1100-1130', 'Номын цаг\nҮйл ажиллагаа-4'],
+    ['1130-1140', 'Төвийн үйл ажиллагаа\nҮйл ажиллагаа-5'], ['1140-1200', 'Зугаалга\nҮйл ажиллагаа-6'],
+    ['1700-1730', 'Хөгжөөн баясах\nҮйл ажиллагаа-7']];
+  const R1 = ['Түр зогсож асуулт асуух хуудаснуудыг тэмдэглэн асуултыг бичих',
+              'Уншиж байхдаа танилцуулах үгсийг хуудасны дугаарын хамт тэмдэглэх',
+              'Уншиж дуусаад асуух асуулт, ярилцах зүйлс, хийх бүтээл'];
+  const R2 = ['Номын тухай эргэн санах: Эхлэл, өрнөл, төгсгөл хэсгүүдтэй холбоотой энгийн асуултууд асуух', ...R1];
+  const R3 = ['Уншихын өмнө', 'Уншиж байхдаа', 'Уншиж дуусаад'];
+  const RINTRO = [
+    'Энэхүү уншлагын үндсэн зорилго нь тухайн номыг танилцуулж, утга агуулга, хэмнэлийг нь алдагдуулахгүйгээр хүүхдэд хүргэх юм. Тиймээс шинэ үгсийг танилцуулахдаа үүнийг харгалзан үзэхээс гадна ойлголтыг бататгах зорилгоор 3-аас ихгүй удаа зогсож асуулт асууж болно.',
+    'Тухайн номын агуулга, үйл явдлын талаарх ойлголтыг нэмэгдүүлж хүүхдийн бодож сэтгэх үйлийг дэмжих зорилгоор нээлттэй, бататгах асуултууд илүү ойр ойр асууна. Түүнчлэн шинэ үгсийг давтан тайлбарлахын зэрэгцээ эхний уншлагаар хараахан танилцуулаагүй үгсийг энэ удаагийн уншлагаар нэмж танилцуулна.',
+    'Хүүхдийн хүүрнэн ярих чадварыг дэмжихийн зэрэгцээ номд гарсан шинэ үгсийг бататгах, хэрэглээг нь дэмжих зорилгоор багшийн чиглүүлэг дор номын үйл явдлыг хүүхдээр түлхүү яриулна.'];
+  const RNAMES = ['Эхний уншлага (1)', 'Хоёр дахь уншлага (2)', 'Гурав дахь уншлага (3)'];
+
+  const nl = s => esc(s).replace(/\n/g, '<br>');
+  const yearOf = (g, m) => { const y = parseInt(g.year, 10) || new Date().getFullYear(); return m >= '09' ? y : y + 1; };
+  const wdOf = iso => { const [y, mo, d] = iso.split('-').map(Number); return WD[new Date(y, mo - 1, d).getDay()]; };
+  const mmdd = iso => iso.slice(5).replace('-', '.');
+  const dotted = iso => iso.replace(/-/g, '.');
+
+  function monthObj(g, m) {
+    g.monthly = g.monthly || {};
+    return g.monthly[m] = g.monthly[m] || { approverTitle: 'АРГАЗҮЙЧ', approver: '', exclude: ['ХӨГЖИМ'],
+      links: {}, notes: {}, schedule: [], acts: {}, readings: [] };
+  }
+
+  // Жилийн төлөвлөгөөнөөс тухайн сарын шүүлт (уялдаа эхэнд, дараа нь давтамж)
+  function filterRows(g, m) {
+    const mo = monthObj(g, m), mi = MONTHS.indexOf(m), out = { u: [], d: [] };
+    g.directions.forEach(d => {
+      if (mo.exclude.includes(d.name)) return;
+      d.rows.forEach(r => {
+        const c = r.months[mi];
+        if (!c || !c.t) return;
+        const dates = mo.schedule.filter(s => s.date && (s.code === r.code || s.link === r.code)).map(s => mmdd(s.date));
+        out[c.t].push({ code: r.code, text: r.text, t: c.t, dir: d.name,
+          link: mo.links[r.code] ?? (c.t === 'u' ? c.code : ''),
+          dates: [...new Set(dates)].sort(), note: mo.notes[r.code] || '' });
+      });
+    });
+    return [...out.u, ...out.d];
+  }
+  const daysText = f => [f.dates.join(', '), f.note].filter(Boolean).join(', ');
+
+  function linkOptions(g, sel, exclude) {
+    return `<option value="">—</option>` + g.directions.map(d =>
+      `<optgroup label="${esc(title(d.name))}">${d.rows.filter(o => o.code !== exclude).map(o =>
+        `<option value="${esc(o.code)}" ${o.code === sel ? 'selected' : ''}>${esc(o.code)}. ${esc(o.text.slice(0, 70))}</option>`).join('')}</optgroup>`).join('');
+  }
+
+  function autoGrow(root) {
+    root.querySelectorAll('textarea.ag').forEach(t => {
+      const fit = () => { t.style.height = 'auto'; t.style.height = (t.scrollHeight + 4) + 'px'; };
+      t.addEventListener('input', fit); requestAnimationFrame(fit);
+    });
+  }
+
+  function renderMonth() {
+    const g = G(), m = ui.month, mo = monthObj(g, m), f = filterRows(g, m);
+    const written = mo.schedule.filter(s => actFilled(mo.acts[s.date])).length;
+    const tabs = [['filter', '🔎', 'Үр дүнгийн шүүлт', f.length], ['schedule', '📅', 'Хуваарь', mo.schedule.length],
+                  ['acts', '🧩', 'Үйл ажиллагаа', `${written}/${mo.schedule.length}`], ['readings', '📖', 'Чанга уншлага', mo.readings.length]];
+    $('#content').innerHTML = `
+      <h2><span class="ic">✏️</span>${title(g.name)} бүлэг — сарын төлөвлөлт</h2>
+      <p class="muted">Жилийн төлөвлөгөөний тухайн сарын баганаас суралцахуйн үр дүнг автоматаар шүүж, өдөр бүрийн үйл ажиллагааг бичнэ.</p>
+      <div class="mchips">${MONTHS.map(x => {
+        const o = g.monthly?.[x], n = o ? o.schedule.length : 0;
+        return `<button data-m="${x}" class="${x === m ? 'active' : ''}"><b>${x}</b><span>сар</span>${n ? `<i>${n}</i>` : ''}</button>`;
+      }).join('')}</div>
+      <div class="subtabs">${tabs.map(([k, ic, l, n]) => `<button data-t="${k}" class="${ui.mtab === k ? 'active' : ''}">${ic} ${l} <small>${n}</small></button>`).join('')}
+        <span class="grow"></span>
+        <button class="btn mint small" id="m-print">🖨️ Сарыг хэвлэх</button>
+        <button class="btn primary small" id="m-word">📄 Сарыг Word-оор</button></div>
+      <div id="mbody"></div>`;
+    $('#content').querySelectorAll('[data-m]').forEach(b => b.onclick = () => { ui.month = b.dataset.m; render(); });
+    $('#content').querySelectorAll('[data-t]').forEach(b => b.onclick = () => { ui.mtab = b.dataset.t; render(); });
+    $('#m-print').onclick = printMonth; $('#m-word').onclick = exportMonthWord;
+    ({ filter: mFilter, schedule: mSchedule, acts: mActs, readings: mReadings })[ui.mtab]?.(g, m, mo, f);
+    autoGrow($('#mbody'));
+  }
+
+  // ---------- 1. Шүүлт ----------
+  function mFilter(g, m, mo, f) {
+    const box = $('#mbody');
+    const missing = f.filter(x => !daysText(x));
+    box.innerHTML = `
+      <div class="mcard">
+        <div class="formgrid">
+          <label>Батлах албан тушаал<input id="m-apt" value="${esc(mo.approverTitle)}"></label>
+          <label>Батлах хүн<input id="m-ap" value="${esc(mo.approver)}" placeholder="ж: Ц.ОДОНЧИМЭГ"></label>
+        </div>
+        <div class="chk">Шүүлтэд оруулах чиглэл:
+          ${g.directions.map(d => `<label><input type="checkbox" data-ex="${esc(d.name)}" ${mo.exclude.includes(d.name) ? '' : 'checked'}> ${dem(d)} ${esc(title(d.name))}</label>`).join('')}</div>
+      </div>
+      ${missing.length ? `<div class="warn-box">⚠️ ${missing.length} үр дүнд хэрэгжүүлэх өдөр алга: ${missing.map(x => esc(x.code)).join(', ')}. Хуваарьт оруулах эсвэл “Өдөр бүр” гэх мэт тэмдэглэл бичнэ үү.</div>` : ''}
+      <div class="scroll"><table class="mt">
+        <thead><tr><th>№</th><th>Суралцахуйн үр дүн</th><th style="width:190px">Уялдаа</th><th>Хэлбэр</th><th style="width:200px">Хэрэгжүүлэх өдөр</th><th>Чиглэл</th></tr></thead>
+        <tbody>${f.map((x, i) => `<tr>
+          <td class="c">${i + 1}</td>
+          <td><span class="code">${esc(x.code)}.</span> ${esc(x.text)}</td>
+          <td><select data-link="${esc(x.code)}">${linkOptions(g, x.link, x.code)}</select></td>
+          <td class="c"><span class="badge ${x.t}">${x.t === 'u' ? 'Уялдаа' : 'Давтамж'}</span></td>
+          <td><div class="dates">${x.dates.map(d => `<span>${d}</span>`).join('') || '<em>хуваарьт алга</em>'}</div>
+              <input data-note="${esc(x.code)}" value="${esc(x.note)}" placeholder="нэмэлт: Өдөр бүр"></td>
+          <td>${dem(g.directions.find(d => d.name === x.dir) || {})} ${esc(title(x.dir))}</td></tr>`).join('')}</tbody></table></div>
+      <p class="muted">Хэрэгжүүлэх өдрийг “Хуваарь”-аас автоматаар (үндсэн болон уялдаа байдлаар орсон өдрүүд) бөглөнө.</p>`;
+    $('#m-apt').oninput = e => { mo.approverTitle = e.target.value; save(); };
+    $('#m-ap').oninput = e => { mo.approver = e.target.value; save(); };
+    box.querySelectorAll('[data-ex]').forEach(c => c.onchange = () => {
+      const n = c.dataset.ex; mo.exclude = c.checked ? mo.exclude.filter(x => x !== n) : [...mo.exclude, n]; save(); render();
+    });
+    box.querySelectorAll('[data-link]').forEach(s => s.onchange = () => { mo.links[s.dataset.link] = s.value; save(); });
+    box.querySelectorAll('[data-note]').forEach(s => s.oninput = () => { mo.notes[s.dataset.note] = s.value; save(); });
+  }
+
+  // ---------- 2. Хуваарь ----------
+  function mSchedule(g, m, mo, f) {
+    const box = $('#mbody'), fl = new Map(f.map(x => [x.code, x]));
+    const used = new Set(mo.schedule.map(s => s.code));
+    const notUsedU = f.filter(x => x.t === 'u' && !used.has(x.code));
+    box.innerHTML = `
+      <div class="toolbar">
+        <button class="btn primary" id="s-gen">📆 Ажлын өдрүүдийг үүсгэх (Да–Ба)</button>
+        <button class="btn lilac" id="s-auto">🪄 Хоосон өдрүүдэд автоматаар хуваарилах</button>
+        <button class="btn" id="s-add">➕ Өдөр нэмэх</button>
+      </div>
+      ${notUsedU.length ? `<div class="warn-box">Хуваарьт ороогүй уялдаатай үр дүн (${notUsedU.length}): ${notUsedU.map(x => esc(x.code)).join(', ')}</div>` : ''}
+      <div class="scroll"><table class="mt">
+        <thead><tr><th style="width:150px">Огноо</th><th>Гараг</th><th>Үндсэн суралцахуйн үр дүн</th><th style="width:200px">Уялдаа</th><th>Үйл ажиллагаа</th><th></th></tr></thead>
+        <tbody>${mo.schedule.map((s, i) => `<tr>
+          <td><input type="date" data-sd="${i}" value="${esc(s.date)}"></td>
+          <td class="c">${s.date ? wdOf(s.date) : ''}</td>
+          <td><select data-sc="${i}"><option value="">— сонгох —</option>${['u', 'd'].map(t => `<optgroup label="${t === 'u' ? 'Уялдаа' : 'Давтамж'}">${
+              f.filter(x => x.t === t).map(x => `<option value="${esc(x.code)}" ${x.code === s.code ? 'selected' : ''}>${used.has(x.code) && x.code !== s.code ? '✓ ' : ''}${esc(x.code)}. ${esc(x.text.slice(0, 80))}</option>`).join('')}</optgroup>`).join('')}
+              ${s.code && !fl.has(s.code) ? `<option value="${esc(s.code)}" selected>${esc(s.code)} (шүүлтэд алга)</option>` : ''}</select></td>
+          <td><select data-sl="${i}">${linkOptions(g, s.link, s.code)}</select></td>
+          <td class="c">${s.date ? `<button class="btn small ${actFilled(mo.acts[s.date]) ? 'mint' : 'primary'}" data-go="${esc(s.date)}">${actFilled(mo.acts[s.date]) ? '✅ Харах' : '✏️ Бичих'}</button>` : ''}</td>
+          <td><button class="btn small danger" data-sdel="${i}">✕</button></td></tr>`).join('') ||
+          `<tr><td colspan="6" class="c muted">Хуваарь хоосон. “Ажлын өдрүүдийг үүсгэх” товчийг дарна уу.</td></tr>`}</tbody></table></div>
+      <p class="muted">Амралт, баярын өдрийг ✕ товчоор хасна. Үндсэн үр дүнг сонгоход уялдаа нь шүүлтээс автоматаар орно.</p>`;
+    const sortSave = () => { mo.schedule.sort((a, b) => (a.date || '9').localeCompare(b.date || '9')); save(); render(); };
+    $('#s-gen').onclick = () => {
+      const y = yearOf(g, m), mon = +m, have = new Set(mo.schedule.map(s => s.date));
+      for (let d = new Date(y, mon - 1, 1); d.getMonth() === mon - 1; d.setDate(d.getDate() + 1)) {
+        const iso = `${y}-${m}-${String(d.getDate()).padStart(2, '0')}`;
+        if (d.getDay() >= 1 && d.getDay() <= 5 && !have.has(iso)) mo.schedule.push({ date: iso, code: '', link: '' });
+      }
+      sortSave();
+    };
+    $('#s-add').onclick = () => { mo.schedule.push({ date: '', code: '', link: '' }); save(); render(); };
+    $('#s-auto').onclick = () => {
+      const queue = [...f.filter(x => x.t === 'u'), ...f.filter(x => x.t === 'd')].filter(x => !used.has(x.code));
+      mo.schedule.forEach(s => { if (!s.code && queue.length) { const x = queue.shift(); s.code = x.code; s.link = x.link; } });
+      save(); render();
+    };
+    box.querySelectorAll('[data-sd]').forEach(el => el.onchange = () => {
+      const s = mo.schedule[el.dataset.sd], old = s.date; s.date = el.value;
+      if (old && mo.acts[old] && !mo.acts[el.value]) { mo.acts[el.value] = mo.acts[old]; delete mo.acts[old]; }
+      sortSave();
+    });
+    box.querySelectorAll('[data-sc]').forEach(el => el.onchange = () => {
+      const s = mo.schedule[el.dataset.sc]; s.code = el.value; s.link = fl.get(el.value)?.link || ''; save(); render();
+    });
+    box.querySelectorAll('[data-sl]').forEach(el => el.onchange = () => { mo.schedule[el.dataset.sl].link = el.value; save(); });
+    box.querySelectorAll('[data-sdel]').forEach(el => el.onclick = () => {
+      const s = mo.schedule[el.dataset.sdel];
+      if (actFilled(mo.acts[s.date]) && !confirm(`${s.date} өдрийн бичсэн үйл ажиллагаа хамт устна. Үргэлжлүүлэх үү?`)) return;
+      delete mo.acts[s.date]; mo.schedule.splice(+el.dataset.sdel, 1); save(); render();
+    });
+    box.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { ui.mtab = 'acts'; ui.act = b.dataset.go; render(); });
+  }
+
+  // ---------- 3. Үйл ажиллагааны төлөвлөлт ----------
+  const actFilled = a => !!a && !!(a.method || a.competence || a.criteria || (a.steps || []).some(s => s.teacher || s.learner));
+  const newAct = () => ({ method: '', competence: '', materials: '', criteria: '',
+    steps: DEFAULT_STEPS.map(([time, name]) => ({ time, name, teacher: '', learner: '' })) });
+
+  function mActs(g, m, mo) {
+    const box = $('#mbody'), idx = outcomeIndex(g);
+    const days = mo.schedule.filter(s => s.date);
+    if (!days.length) { box.innerHTML = `<p class="muted">Эхлээд “Хуваарь” хэсэгт өдрүүдээ үүсгэнэ үү.</p>`; return; }
+    if (!days.some(s => s.date === ui.act)) ui.act = (days.find(s => !actFilled(mo.acts[s.date])) || days[0]).date;
+    const s = days.find(x => x.date === ui.act);
+    const a = mo.acts[s.date] = mo.acts[s.date] || newAct();
+    const main = idx.get(s.code), link = idx.get(s.link);
+    const prev = days[days.findIndex(x => x.date === s.date) - 1];
+    box.innerHTML = `
+      <div class="act-layout">
+        <div class="act-list">${days.map(x => `<button data-day="${esc(x.date)}" class="${x.date === s.date ? 'active' : ''}">
+            <span>${actFilled(mo.acts[x.date]) ? '✅' : '⬜'}</span><b>${mmdd(x.date)}</b><small>${wdOf(x.date).slice(0, 2)}</small><em>${esc(x.code || '—')}</em></button>`).join('')}</div>
+        <div class="act-edit">
+          <div class="act-head">
+            <div><small>Бүлэг</small><b>${gem(g)} ${title(g.name)} бүлэг</b></div>
+            <div style="flex:3"><small>Суралцахуйн үр дүн</small><b>${s.code ? `${esc(s.code)}. ${esc(main?.text || '')}` : '<em>Хуваарьт үндсэн үр дүн сонгоогүй</em>'}</b></div>
+            <div><small>Хугацаа</small><b>${dotted(s.date)}<br>${wdOf(s.date)}</b></div>
+          </div>
+          <div class="formgrid">
+            <label>Суралцахуйн арга<input data-f="method" list="dl-methods" value="${esc(a.method)}" placeholder="сонгох эсвэл бичих"></label>
+            <label>Суралцахуйн үр дүн уялдаа<div class="ro">${s.link ? `${esc(s.link)}. ${esc(link?.text || '')}` : '— (хуваарьт сонгоно)'}</div></label>
+          </div>
+          <datalist id="dl-methods">${METHODS.map(x => `<option value="${esc(x)}">`).join('')}</datalist>
+          <label>Чадамж<textarea class="ag" data-f="competence" rows="2">${esc(a.competence)}</textarea></label>
+          <label>Хэрэглэгдэхүүн<textarea class="ag" data-f="materials" rows="2">${esc(a.materials)}</textarea></label>
+          <label>Үнэлгээний шалгуур<textarea class="ag" data-f="criteria" rows="2">${esc(a.criteria)}</textarea></label>
+          <h3 class="sec">🕒 Өдрийн үйл ажиллагааны явц</h3>
+          <div class="scroll"><table class="mt steps">
+            <thead><tr><th style="width:96px">Хугацаа</th><th style="width:150px">Сургалт үйл ажиллагаа</th><th>Багшлахуйн үйл ажиллагаа</th><th>Суралцахуйн үйл ажиллагаа</th><th style="width:70px"></th></tr></thead>
+            <tbody>${a.steps.map((st, i) => `<tr>
+              <td><input data-st="${i}:time" value="${esc(st.time)}"></td>
+              <td><textarea class="ag" data-st="${i}:name" rows="2">${esc(st.name)}</textarea></td>
+              <td><textarea class="ag" data-st="${i}:teacher" rows="3" placeholder="Багш юу хийх вэ…">${esc(st.teacher)}</textarea></td>
+              <td><textarea class="ag" data-st="${i}:learner" rows="3" placeholder="Хүүхдүүд юу хийх вэ…">${esc(st.learner)}</textarea></td>
+              <td class="c"><button class="btn small" data-mv="${i}:-1">↑</button><button class="btn small" data-mv="${i}:1">↓</button><button class="btn small danger" data-del="${i}">✕</button></td></tr>`).join('')}</tbody></table></div>
+          <div class="toolbar">
+            <button class="btn" id="a-add">➕ Мөр нэмэх</button>
+            ${prev ? `<button class="btn lilac" id="a-copy">📋 Өмнөх өдрийн (${mmdd(prev.date)}) хугацаа, бүтцийг хуулах</button>` : ''}
+            <span class="grow"></span>
+            <button class="btn mint" id="a-print">🖨️ Энэ өдрийг хэвлэх</button>
+            <button class="btn primary" id="a-word">📄 Энэ өдрийг Word-оор</button>
+          </div>
+        </div>
+      </div>`;
+    box.querySelectorAll('[data-day]').forEach(b => b.onclick = () => { ui.act = b.dataset.day; render(); });
+    box.querySelectorAll('[data-f]').forEach(el => el.oninput = () => { a[el.dataset.f] = el.value; save(); markDay(); });
+    box.querySelectorAll('[data-st]').forEach(el => el.oninput = () => {
+      const [i, k] = el.dataset.st.split(':'); a.steps[i][k] = el.value; save(); markDay();
+    });
+    const markDay = () => { const b = box.querySelector(`[data-day="${s.date}"] span`); if (b) b.textContent = actFilled(a) ? '✅' : '⬜'; };
+    box.querySelectorAll('[data-mv]').forEach(b => b.onclick = () => {
+      const [i, d] = b.dataset.mv.split(':').map(Number), j = i + d;
+      if (j >= 0 && j < a.steps.length) { [a.steps[i], a.steps[j]] = [a.steps[j], a.steps[i]]; save(); render(); }
+    });
+    box.querySelectorAll('[data-del]').forEach(b => b.onclick = () => { a.steps.splice(+b.dataset.del, 1); save(); render(); });
+    $('#a-add').onclick = () => { a.steps.push({ time: '', name: '', teacher: '', learner: '' }); save(); render(); };
+    if (prev) $('#a-copy').onclick = () => {
+      const p = mo.acts[prev.date];
+      if (!p) return;
+      if (a.steps.some(x => x.teacher || x.learner) && !confirm('Одоогийн явцын мөрүүдийг солих уу? (Бичсэн агуулга устна)')) return;
+      a.steps = p.steps.map(x => ({ time: x.time, name: x.name, teacher: '', learner: '' })); save(); render();
+    };
+    $('#a-print').onclick = () => printDocs(actDoc(g, mo, s) + mo.readings.filter(r => readingFirst(g, m, r) === s.date).map(r => readingDoc(r)).join(''));
+    $('#a-word').onclick = () => wordDownload(actDoc(g, mo, s), `${title(g.name)}_${s.date}_үйл_ажиллагаа.doc`);
+  }
+
+  // ---------- 4. Чанга уншлага ----------
+  function mReadings(g, m, mo) {
+    const box = $('#mbody');
+    if (ui.read == null || !mo.readings[ui.read]) ui.read = mo.readings.length ? 0 : -1;
+    const r = mo.readings[ui.read];
+    box.innerHTML = `
+      <div class="toolbar">
+        ${mo.readings.map((x, i) => `<button class="btn small ${i === ui.read ? 'primary' : ''}" data-r="${i}">📖 ${esc(x.book || 'Нэргүй ном')}</button>`).join('')}
+        <button class="btn mint small" id="r-new">➕ Шинэ ном</button>
+      </div>
+      ${!r ? '<p class="muted">Энэ сард чанга уншлагын төлөвлөгөө алга. “Шинэ ном” товчоор нэмнэ үү.</p>' : `
+      <div class="mcard">
+        <div class="formgrid">
+          <label>Номын нэр<input data-rf="book" value="${esc(r.book)}"></label>
+          <label>Зохиолч, зураач<input data-rf="author" value="${esc(r.author)}"></label>
+        </div>
+        <label>Уншлагын өдрүүд<input data-rf="days" value="${esc(r.days)}" placeholder="11.02 (1-р уншлага), 11.04 (2-р уншлага), 11.06 (3-р уншлага)"></label>
+        <label>Уншлагын зорилго <span class="muted">(бусад суралцахуйн чиглэлтэй холбоотой зорилгыг нэмэлтээр тусгах)</span><textarea class="ag" data-rf="goals" rows="3">${esc(r.goals)}</textarea></label>
+        <label>Номын товч танилцуулга<textarea class="ag" data-rf="summary" rows="3">${esc(r.summary)}</textarea></label>
+      </div>
+      <h3 class="sec">🔤 Шинээр танилцуулах үгс</h3>
+      <div class="scroll"><table class="mt">
+        <thead><tr><th>Ном уншихын өмнө заах үг</th><th>Уншиж байхдаа утгачлан тайлбарлах үг</th><th>Үйл хөдлөл, номын зураг зэргийг ашиглан танилцуулах үг</th><th style="width:40px"></th></tr></thead>
+        <tbody>${r.words.map((w, i) => `<tr>${[0, 1, 2].map(k => `<td><textarea class="ag" rows="1" data-w="${i}:${k}">${esc(w[k])}</textarea></td>`).join('')}
+          <td><button class="btn small danger" data-wdel="${i}">✕</button></td></tr>`).join('')}</tbody></table></div>
+      <div class="toolbar"><button class="btn small" id="w-add">➕ Үг нэмэх</button></div>
+      ${[['r1', R1], ['r2', R2], ['r3', R3]].map(([k, labels], ri) => `
+        <h3 class="sec">${['1️⃣', '2️⃣', '3️⃣'][ri]} ${RNAMES[ri]}</h3>
+        <p class="muted">${RINTRO[ri]}</p>
+        ${labels.map(l => `<label>${esc(l)}<textarea class="ag" rows="2" data-rr="${k}" data-rl="${esc(l)}">${esc(r[k][l] || '')}</textarea></label>`).join('')}`).join('')}
+      <h3 class="sec">📜 Номын бичвэр</h3>
+      <textarea class="ag" rows="6" data-rf="text" placeholder="Хуудас 1. …&#10;Хуудас 2. …">${esc(r.text)}</textarea>
+      <div class="toolbar"><span class="grow"></span>
+        <button class="btn danger" id="r-del">🗑️ Энэ номыг устгах</button>
+        <button class="btn mint" id="r-print">🖨️ Хэвлэх</button>
+        <button class="btn primary" id="r-word">📄 Word-оор</button></div>`}`;
+    box.querySelectorAll('[data-r]').forEach(b => b.onclick = () => { ui.read = +b.dataset.r; render(); });
+    $('#r-new').onclick = () => {
+      mo.readings.push({ days: '', book: '', author: '', goals: '', summary: '', words: [['', '', '']], r1: {}, r2: {}, r3: {}, text: '' });
+      ui.read = mo.readings.length - 1; save(); render();
+    };
+    if (!r) return;
+    box.querySelectorAll('[data-rf]').forEach(el => el.oninput = () => { r[el.dataset.rf] = el.value; save(); });
+    box.querySelectorAll('[data-rr]').forEach(el => el.oninput = () => { r[el.dataset.rr][el.dataset.rl] = el.value; save(); });
+    box.querySelectorAll('[data-w]').forEach(el => el.oninput = () => { const [i, k] = el.dataset.w.split(':'); r.words[i][k] = el.value; save(); });
+    box.querySelectorAll('[data-wdel]').forEach(b => b.onclick = () => { r.words.splice(+b.dataset.wdel, 1); save(); render(); });
+    $('#w-add').onclick = () => { r.words.push(['', '', '']); save(); render(); };
+    $('#r-del').onclick = () => { if (confirm(`“${r.book}” номын төлөвлөгөөг устгах уу?`)) { mo.readings.splice(ui.read, 1); ui.read = 0; save(); render(); } };
+    $('#r-print').onclick = () => printDocs(readingDoc(r));
+    $('#r-word').onclick = () => wordDownload(readingDoc(r), `Чанга_уншлага_${r.book || 'ном'}.doc`);
+  }
+
+  function readingFirst(g, m, r) {
+    const mm = (r.days || '').match(/(\d\d)\.(\d\d)/);
+    if (!mm) return '';
+    return `${yearOf(g, mm[1])}-${mm[1]}-${mm[2]}`;
+  }
+
+  // ---------- Баримт бичиг (хэвлэх / Word) ----------
+  const sign = g => `<p class="sig">БОЛОВСРУУЛСАН<br>БАГШ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${esc(g.teacher)}</p>`;
+  const page = html => `<div class="pdoc">${html}</div>`;
+
+  function filterDoc(g, m, mo) {
+    const f = filterRows(g, m), y = yearOf(g, m);
+    return page(`
+      <table class="nob"><tr><td></td><td class="appr">БАТЛАВ<br>${esc(mo.approverTitle)} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${esc(mo.approver)}<br>${y} оны ..... сарын ..... өдөр</td></tr></table>
+      <p class="ttl">${esc(g.school)} ${esc(g.name)} БҮЛГИЙН ${y} ОНЫ ${+m} ${(ORD[m] || '').toUpperCase()} САРЫН СУРАЛЦАХУЙН ҮР ДҮН, УЯЛДААНЫ ШҮҮЛТ</p>
+      <p class="ctr">(${esc(g.year)} оны хичээлийн жилийн сургалтын үйл ажиллагааны төлөвлөгөөнөөс)</p>
+      <table class="dt"><thead><tr><th>№</th><th>Суралцахуйн үр дүн</th><th>Уялдаа</th><th>Хэлбэр</th><th>Хэрэгжүүлэх өдөр</th><th>Чиглэл</th></tr></thead>
+      <tbody>${f.map((x, i) => `<tr><td class="c">${i + 1}</td><td>${esc(x.code)}. ${esc(x.text)}</td><td class="c">${esc(x.link)}</td>
+        <td class="c">${x.t === 'u' ? 'Уялдаа' : 'Давтамж'}</td><td class="c">${esc(daysText(x))}</td><td>${esc(title(x.dir))}</td></tr>`).join('')}</tbody></table>
+      ${sign(g)}`);
+  }
+
+  function scheduleDoc(g, m, mo) {
+    const idx = outcomeIndex(g), y = yearOf(g, m);
+    return page(`
+      <p class="ttl">${y} ОНЫ ${+m} ${(ORD[m] || '').toUpperCase()} САРЫН ЧИГЛҮҮЛЭГТЭЙ ҮЙЛ АЖИЛЛАГААНЫ ХУВААРЬ</p>
+      <table class="dt"><thead><tr><th>Огноо</th><th>Гараг</th><th>Үндсэн суралцахуйн үр дүн</th><th>Уялдаа</th></tr></thead>
+      <tbody>${mo.schedule.filter(s => s.date).map(s => `<tr><td class="c">${dotted(s.date)}</td><td class="c">${wdOf(s.date)}</td>
+        <td>${s.code ? `${esc(s.code)}. ${esc(idx.get(s.code)?.text || '')}` : ''}</td><td class="c">${esc(s.link)}</td></tr>`).join('')}</tbody></table>
+      ${sign(g)}`);
+  }
+
+  function actDoc(g, mo, s) {
+    const idx = outcomeIndex(g), a = mo.acts[s.date] || newAct(), link = idx.get(s.link);
+    return page(`
+      <p class="ttl">ЧИГЛҮҮЛЭГТЭЙ ҮЙЛ АЖИЛЛАГААНЫ ТӨЛӨВЛӨЛТ</p>
+      <table class="dt"><tr><th>Бүлэг</th><th>Суралцахуйн үр дүн</th><th>Хугацаа</th><th>БАТЛАВ<br>${esc(title(mo.approverTitle))}<br>${esc(mo.approver)}</th></tr>
+        <tr><td class="c">${title(g.name)} бүлэг</td><td>${s.code ? `${esc(s.code)}. ${esc(idx.get(s.code)?.text || '')}` : ''}</td><td class="c">${dotted(s.date)}</td><td></td></tr></table>
+      <p><b>Суралцахуйн арга:</b> &nbsp; ${esc(a.method)}</p>
+      <p><b>Суралцахуйн үр дүн уялдаа:</b> &nbsp; ${s.link ? `${esc(s.link)}. ${esc(link?.text || '')}` : ''}</p>
+      <p><b>Чадамж:</b> &nbsp; ${nl(a.competence)}</p>
+      <p><b>Хэрэглэгдэхүүн:</b> &nbsp; ${nl(a.materials)}</p>
+      <p><b>Үнэлгээний шалгуур:</b> &nbsp; ${nl(a.criteria)}</p>
+      <table class="dt"><thead><tr><th style="width:12%">Хугацаа</th><th style="width:16%">Сургалт үйл ажиллагаа</th><th>Багшлахуйн үйл ажиллагаа</th><th>Суралцахуйн үйл ажиллагаа</th></tr></thead>
+      <tbody>${a.steps.map(x => `<tr><td class="c">${esc(x.time)}</td><td>${nl(x.name)}</td><td>${nl(x.teacher)}</td><td>${nl(x.learner)}</td></tr>`).join('')}</tbody></table>
+      ${sign(g)}`);
+  }
+
+  function readingDoc(r) {
+    const rt = (k, labels, i) => `<table class="dt"><tr><th colspan="2">${RNAMES[i]}</th></tr><tr><td colspan="2"><i>${RINTRO[i]}</i></td></tr>
+      ${labels.map(l => `<tr><td style="width:32%"><b>${esc(l)}</b></td><td>${nl(r[k][l] || '')}</td></tr>`).join('')}</table>`;
+    return page(`
+      <p class="ttl">ЧАНГА УНШЛАГЫН АРГА ЗҮЙ<br>ТӨЛӨВЛӨГӨӨНИЙ ХУУДАС</p>
+      <p>Уншлагын өдрүүд: ${esc(r.days)}</p>
+      <table class="dt"><tr><td style="width:32%"><b>Номын нэр:</b></td><td>«${esc(r.book)}»</td></tr>
+        <tr><td><b>Зохиолч, зураач:</b></td><td>${esc(r.author)}</td></tr>
+        <tr><td><b>Уншлагын зорилго:</b> (Бусад суралцахуйн чиглэлүүдтэй холбоотой зорилгыг нэмэлтээр тусгах)</td><td>${nl(r.goals)}</td></tr></table>
+      <table class="dt"><tr><th>Номын товч танилцуулга:</th></tr><tr><td>${nl(r.summary)}</td></tr></table>
+      <table class="dt"><tr><th colspan="3">Шинээр танилцуулах үгс:</th></tr>
+        <tr><th>Ном уншихын өмнө заах үг</th><th>Уншиж байхдаа утгачлан тайлбарлах үг</th><th>Үйл хөдлөл, номын зураг зэргийг ашиглан танилцуулах үг</th></tr>
+        ${r.words.map(w => `<tr>${w.map(x => `<td>${nl(x)}</td>`).join('')}</tr>`).join('')}</table>
+      ${rt('r1', R1, 0)}${rt('r2', R2, 1)}${rt('r3', R3, 2)}
+      ${r.text ? `<table class="dt"><tr><th>Номын бичвэр: «${esc(r.book)}»</th></tr><tr><td>${nl(r.text)}</td></tr></table>` : ''}`);
+  }
+
+  function monthDocs(g, m) {
+    const mo = monthObj(g, m), placed = new Set();
+    let html = filterDoc(g, m, mo) + scheduleDoc(g, m, mo);
+    mo.schedule.filter(s => s.date).forEach(s => {
+      html += actDoc(g, mo, s);
+      mo.readings.forEach((r, i) => { if (!placed.has(i) && readingFirst(g, m, r) === s.date) { placed.add(i); html += readingDoc(r); } });
+    });
+    mo.readings.forEach((r, i) => { if (!placed.has(i)) html += readingDoc(r); });
+    return html;
+  }
+
+  function printDocs(html) { $('#print-root').innerHTML = `<div class="mdocs">${html}</div>`; window.print(); }
+  function printMonth() { printDocs(monthDocs(G(), ui.month)); }
+
+  const DOC_CSS = `
+    .pdoc { font-family: "Times New Roman", serif; font-size: 11pt; }
+    .mdocs p { margin: 4pt 0; }
+    .mdocs .ttl { text-align: center; font-weight: bold; margin: 8pt 0; }
+    .mdocs .ctr { text-align: center; }
+    .mdocs .sig { font-weight: bold; margin-top: 14pt; }
+    .mdocs table.nob { width: 100%; border: none; } .mdocs table.nob td { border: none; }
+    .mdocs td.appr { width: 42%; font-weight: bold; }
+    .mdocs table.dt { border-collapse: collapse; width: 100%; margin: 6pt 0; font-size: 10pt; }
+    .mdocs .dt th, .mdocs .dt td { border: 1px solid #000; padding: 3pt 5pt; vertical-align: top; text-align: left; }
+    .mdocs .dt th { background: #F2F2F2; text-align: center; }
+    .mdocs .dt td.c { text-align: center; }`;
+
+  function wordDownload(html, name) {
+    const parts = html.split('<div class="pdoc">').filter(Boolean).map(x => '<div class="pdoc">' + x);
+    const doc = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+      <head><meta charset="utf-8"><style>@page WordSection1 { size: 595.3pt 841.9pt; margin: 56.7pt 42.5pt 56.7pt 85pt; }
+      div.WordSection1 { page: WordSection1; } body { font-family: "Times New Roman", serif; font-size: 11pt; }
+      ${DOC_CSS.replace(/\.mdocs /g, '')}</style></head>
+      <body><div class="WordSection1 mdocs">${parts.join('<br clear=all style="page-break-before:always">')}</div></body></html>`;
+    download('﻿' + doc, name, 'application/msword');
+  }
+
+  function exportMonthWord() {
+    const g = G();
+    wordDownload(monthDocs(g, ui.month), `${title(g.name)}_бүлэг_${yearOf(g, ui.month)}_${ui.month}_сарын_төлөвлөлт.doc`);
+  }
+  document.head.insertAdjacentHTML('beforeend', `<style>@page monthly { size: A4 portrait; margin: 20mm 15mm 20mm 30mm; } @media print { ${DOC_CSS} .mdocs .pdoc { page: monthly; page-break-after: always; } .mdocs .pdoc:last-child { page-break-after: auto; } }</style>`);
+
 
   render();
 })();
