@@ -11,11 +11,13 @@ def extra_days(f, schedule):
     return ', '.join(t for t in (x.strip() for x in f['days'].split(',')) if t and t not in auto)
 
 
-def month_from_sample(s):
+def month_from_sample(s, g):
     """extract_month.py-ийн гаралтыг системийн сарын бүтэц рүү хөрвүүлэх."""
     return {
         'approveWord': s.get('approveWord', 'БАТЛАВ'), 'approverTitle': s['approverTitle'], 'approver': s['approver'],
-        'exclude': sorted({'ХӨГЖИМ'}),
+        # Загварт ороогүй чиглэлийг (ж: Ахлах бүлэгт Хөгжим) шүүлтээс хасна
+        'exclude': [d['name'] for d in g['directions'] if not any(f['dir'].upper() == d['name'] for f in s['filter'])],
+        'remark': s.get('remark', ''),
         'links': {f['code']: f['link'] for f in s['filter']},
         'notes': {code: note for code, note in ((f['code'], extra_days(f, s['schedule'])) for f in s['filter']) if note},
         'schedule': [{'date': d['date'], 'code': d['code'], 'link': d['link']} for d in s['schedule']],
@@ -29,7 +31,7 @@ for p in sorted((root / 'data').glob('month-*.json')):
     s = json.loads(p.read_text(encoding='utf-8'))
     g = next((g for g in data['groups'] if g['name'] == s['group']), None)
     if g:
-        g.setdefault('monthly', {})[s['month']] = month_from_sample(s)
+        g.setdefault('monthly', {})[s['month']] = month_from_sample(s, g)
 
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
 assert '/*__PLAN_DATA__*/null' in tpl
