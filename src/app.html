@@ -679,6 +679,7 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
   const mmdd = iso => iso.slice(5).replace('-', '.');
   const dotted = iso => iso.replace(/-/g, '.');
 
+  const origMonth = (g, m) => { const o = ORIGINAL.groups.find(x => x.name === g.name)?.monthly?.[m]; return o && !o.draft ? o : null; };
   function monthObj(g, m) {
     g.monthly = g.monthly || {};
     return g.monthly[m] = g.monthly[m] || { approveWord: 'БАТЛАВ', approverTitle: 'АРГАЗҮЙЧ', approver: '', exclude: ['ХӨГЖИМ'],
@@ -736,12 +737,17 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
         <span class="grow"></span>
         <button class="btn mint small" id="m-print">🖨️ Сарыг хэвлэх</button>
         <button class="btn primary small" id="m-word">📄 Сарыг Word-оор</button></div>
-      ${mo.draft ? `<div class="warn-box">📝 <b>Ноорог:</b> энэ сарын Word файл ирээгүй тул шүүлт, хуваарийг жилийн төлөвлөгөөнөөс автоматаар үүсгэсэн. Амралтын өдрүүдийг шалгаж, үйл ажиллагаа, чанга уншлагыг бөглөнө үү. <button class="btn small" id="m-undraft">Ноорог тэмдгийг арилгах</button></div>` : ''}
+      ${mo.draft ? `<div class="warn-box">📝 <b>Ноорог:</b> энэ сарын Word файл ирээгүй тул шүүлт, хуваарийг жилийн төлөвлөгөөнөөс автоматаар үүсгэсэн. Амралтын өдрүүдийг шалгаж, үйл ажиллагаа, чанга уншлагыг бөглөнө үү. <button class="btn small" id="m-undraft">Ноорог тэмдгийг арилгах</button>
+        ${origMonth(g, m) ? `<br>📥 Энэ сарын Word файлын хувилбар системд ирсэн байна. <button class="btn small primary" id="m-useorig">Ирсэн хувилбараар солих</button>` : ''}</div>` : ''}
       <div id="mbody"></div>`;
     $('#content').querySelectorAll('[data-m]').forEach(b => b.onclick = () => { ui.month = b.dataset.m; render(); });
     $('#content').querySelectorAll('[data-t]').forEach(b => b.onclick = () => { ui.mtab = b.dataset.t; render(); });
     $('#m-print').onclick = printMonth; $('#m-word').onclick = exportMonthWord;
     if (mo.draft) $('#m-undraft').onclick = () => { delete mo.draft; save(); render(); };
+    if (mo.draft && origMonth(g, m)) $('#m-useorig').onclick = () => {
+      if (!confirm('Энэ сарын ноорогт бичсэн зүйл устаж, ирсэн Word файлын хувилбараар солигдоно. Үргэлжлүүлэх үү?')) return;
+      g.monthly[m] = clone(origMonth(g, m)); save(); render();
+    };
     ({ filter: mFilter, schedule: mSchedule, acts: mActs, readings: mReadings })[ui.mtab]?.(g, m, mo, f);
     autoGrow($('#mbody'));
   }
