@@ -14,7 +14,7 @@ def extra_days(f, schedule):
 def month_from_sample(s):
     """extract_month.py-ийн гаралтыг системийн сарын бүтэц рүү хөрвүүлэх."""
     return {
-        'approverTitle': s['approverTitle'], 'approver': s['approver'],
+        'approveWord': s.get('approveWord', 'БАТЛАВ'), 'approverTitle': s['approverTitle'], 'approver': s['approver'],
         'exclude': sorted({'ХӨГЖИМ'}),
         'links': {f['code']: f['link'] for f in s['filter']},
         'notes': {code: note for code, note in ((f['code'], extra_days(f, s['schedule'])) for f in s['filter']) if note},

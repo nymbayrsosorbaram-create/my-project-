@@ -675,7 +675,7 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
 
   function monthObj(g, m) {
     g.monthly = g.monthly || {};
-    return g.monthly[m] = g.monthly[m] || { approverTitle: 'АРГАЗҮЙЧ', approver: '', exclude: ['ХӨГЖИМ'],
+    return g.monthly[m] = g.monthly[m] || { approveWord: 'БАТЛАВ', approverTitle: 'АРГАЗҮЙЧ', approver: '', exclude: ['ХӨГЖИМ'],
       links: {}, notes: {}, schedule: [], acts: {}, readings: [] };
   }
 
@@ -745,6 +745,7 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
     box.innerHTML = `
       <div class="mcard">
         <div class="formgrid">
+          <label>Гарын үсгийн хэсэг<select id="m-aw">${['БАТЛАВ', 'ХЯНАСАН'].map(w => `<option ${(mo.approveWord || 'БАТЛАВ') === w ? 'selected' : ''}>${w}</option>`).join('')}</select></label>
           <label>Батлах албан тушаал<input id="m-apt" value="${esc(mo.approverTitle)}"></label>
           <label>Батлах хүн<input id="m-ap" value="${esc(mo.approver)}" placeholder="ж: Ц.ОДОНЧИМЭГ"></label>
         </div>
@@ -763,6 +764,7 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
               <input data-note="${esc(x.code)}" value="${esc(x.note)}" placeholder="нэмэлт өдөр: 01.04 эсвэл Өдөр бүр"></td>
           <td>${dem(g.directions.find(d => d.name === x.dir) || {})} ${esc(title(x.dir))}</td></tr>`).join('')}</tbody></table></div>
       <p class="muted">Хэрэгжүүлэх өдрийг “Хуваарь”-аас автоматаар (үндсэн болон уялдаа байдлаар орсон өдрүүд) бөглөнө. Бусад өдөр давтан хэрэгжүүлэх бол доорх нүдэнд “02.16, 02.17” эсвэл “Өдөр бүр” гэж нэмж бичнэ.</p>`;
+    $('#m-aw').onchange = e => { mo.approveWord = e.target.value; save(); };
     $('#m-apt').oninput = e => { mo.approverTitle = e.target.value; save(); };
     $('#m-ap').oninput = e => { mo.approver = e.target.value; save(); };
     box.querySelectorAll('[data-ex]').forEach(c => c.onchange = () => {
@@ -966,7 +968,7 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
   function filterDoc(g, m, mo) {
     const f = filterRows(g, m), y = yearOf(g, m);
     return page(`
-      <table class="nob"><tr><td></td><td class="appr">БАТЛАВ<br>${esc(mo.approverTitle)} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${esc(mo.approver)}<br>${y} оны ..... сарын ..... өдөр</td></tr></table>
+      <table class="nob"><tr><td></td><td class="appr">${esc(mo.approveWord || 'БАТЛАВ')}<br>${esc(mo.approverTitle)} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${esc(mo.approver)}<br>${y} оны ..... сарын ..... өдөр</td></tr></table>
       <p class="ttl">${esc(g.school)} ${esc(g.name)} БҮЛГИЙН ${y} ОНЫ ${+m} ${(ORD[m] || '').toUpperCase()} САРЫН СУРАЛЦАХУЙН ҮР ДҮН, УЯЛДААНЫ ШҮҮЛТ</p>
       <p class="ctr">(${esc(g.year)} оны хичээлийн жилийн сургалтын үйл ажиллагааны төлөвлөгөөнөөс)</p>
       <table class="dt"><thead><tr><th>№</th><th>Суралцахуйн үр дүн</th><th>Уялдаа</th><th>Хэлбэр</th><th>Хэрэгжүүлэх өдөр</th><th>Чиглэл</th></tr></thead>
@@ -989,7 +991,7 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
     const idx = outcomeIndex(g), a = mo.acts[s.date] || newAct(), link = idx.get(s.link);
     return page(`
       <p class="ttl">ЧИГЛҮҮЛЭГТЭЙ ҮЙЛ АЖИЛЛАГААНЫ ТӨЛӨВЛӨЛТ</p>
-      <table class="dt"><tr><th>Бүлэг</th><th>Суралцахуйн үр дүн</th><th>Хугацаа</th><th>БАТЛАВ<br>${esc(title(mo.approverTitle))}<br>${esc(mo.approver)}</th></tr>
+      <table class="dt"><tr><th>Бүлэг</th><th>Суралцахуйн үр дүн</th><th>Хугацаа</th><th>${esc(mo.approveWord || 'БАТЛАВ')}<br>${esc(title(mo.approverTitle))}<br>${esc(mo.approver)}</th></tr>
         <tr><td class="c">${title(g.name)} бүлэг</td><td>${s.code ? `${esc(s.code)}. ${esc(idx.get(s.code)?.text || '')}` : ''}</td><td class="c">${dotted(s.date)}</td><td></td></tr></table>
       <p><b>Суралцахуйн арга:</b> &nbsp; ${esc(a.method)}</p>
       <p><b>Суралцахуйн үр дүн уялдаа:</b> &nbsp; ${s.link ? `${esc(s.link)}. ${esc(link?.text || '')}` : ''}</p>

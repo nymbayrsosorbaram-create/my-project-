@@ -43,7 +43,7 @@ ACT_KEYS = {'Суралцахуйн арга': 'method', 'Суралцахуйн
 
 def parse(path):
     body = ET.fromstring(zipfile.ZipFile(path).read('word/document.xml')).find(W + 'body')
-    out = {'group': '', 'month': '', 'year': '', 'approverTitle': '', 'approver': '', 'teacher': '',
+    out = {'group': '', 'month': '', 'year': '', 'approveWord': 'БАТЛАВ', 'approverTitle': '', 'approver': '', 'teacher': '',
            'filter': [], 'schedule': [], 'acts': [], 'readings': []}
     mode, cur, rmode = None, None, None
     for el in body:
@@ -51,9 +51,9 @@ def parse(path):
             t = ptext(el).strip()
             if not t:
                 continue
-            m = re.match(r'^БАТЛАВ\s+(\S+)\s+(\S+)', t)
+            m = re.match(r'^(БАТЛАВ|ХЯНАСАН)\s+(\S+)\s+(\S+)', t)
             if m and not out['approver']:
-                out['approverTitle'], out['approver'] = m.group(1), m.group(2)
+                out['approveWord'], out['approverTitle'], out['approver'] = m.group(1), m.group(2), m.group(3)
             m = re.search(r'ЦЭЦЭРЛЭГИЙН (\S+) БҮЛГИЙН (\d{4}) ОНЫ (\d+) (?:ДУГААР|ДҮГЭЭР) САРЫН СУРАЛЦАХУЙН', t)
             if m:
                 out['group'], out['year'], out['month'] = m.group(1), m.group(2), m.group(3).zfill(2)
