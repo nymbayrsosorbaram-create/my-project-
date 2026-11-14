@@ -348,7 +348,9 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
     // Шинээр нэмэгдсэн сарыг нэмнэ (хэрэглэгчийн бичсэн сарыг дарахгүй)
     Object.keys(om).forEach(k => {
       const cur = g.monthly[k];
-      if (!cur || (!cur.schedule?.length && !cur.readings?.length)) g.monthly[k] = clone(om[k]);
+      const written = cur && Object.values(cur.acts || {}).some(a => a && (a.method || a.competence || a.criteria || (a.steps || []).some(x => x.teacher || x.learner)));
+      // Хоосон сар, эсвэл үйл ажиллагаа бичээгүй ноорог сарыг шинэ өгөгдлөөр солино
+      if (!cur || (!cur.schedule?.length && !cur.readings?.length) || (cur.draft && !om[k].draft && !written)) g.monthly[k] = clone(om[k]);
     });
   });
   if (!MONTHS.includes(ui.month)) {
@@ -728,16 +730,18 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
       <p class="muted">Жилийн төлөвлөгөөний тухайн сарын баганаас суралцахуйн үр дүнг автоматаар шүүж, өдөр бүрийн үйл ажиллагааг бичнэ.</p>
       <div class="mchips">${MONTHS.map(x => {
         const o = g.monthly?.[x], n = o ? o.schedule.length : 0;
-        return `<button data-m="${x}" class="${x === m ? 'active' : ''}"><b>${x}</b><span>сар</span>${n ? `<i>${n}</i>` : ''}</button>`;
+        return `<button data-m="${x}" class="${x === m ? 'active' : ''}"><b>${x}</b><span>${o?.draft ? 'ноорог' : 'сар'}</span>${n ? `<i>${n}</i>` : ''}</button>`;
       }).join('')}</div>
       <div class="subtabs">${tabs.map(([k, ic, l, n]) => `<button data-t="${k}" class="${ui.mtab === k ? 'active' : ''}">${ic} ${l} <small>${n}</small></button>`).join('')}
         <span class="grow"></span>
         <button class="btn mint small" id="m-print">🖨️ Сарыг хэвлэх</button>
         <button class="btn primary small" id="m-word">📄 Сарыг Word-оор</button></div>
+      ${mo.draft ? `<div class="warn-box">📝 <b>Ноорог:</b> энэ сарын Word файл ирээгүй тул шүүлт, хуваарийг жилийн төлөвлөгөөнөөс автоматаар үүсгэсэн. Амралтын өдрүүдийг шалгаж, үйл ажиллагаа, чанга уншлагыг бөглөнө үү. <button class="btn small" id="m-undraft">Ноорог тэмдгийг арилгах</button></div>` : ''}
       <div id="mbody"></div>`;
     $('#content').querySelectorAll('[data-m]').forEach(b => b.onclick = () => { ui.month = b.dataset.m; render(); });
     $('#content').querySelectorAll('[data-t]').forEach(b => b.onclick = () => { ui.mtab = b.dataset.t; render(); });
     $('#m-print').onclick = printMonth; $('#m-word').onclick = exportMonthWord;
+    if (mo.draft) $('#m-undraft').onclick = () => { delete mo.draft; save(); render(); };
     ({ filter: mFilter, schedule: mSchedule, acts: mActs, readings: mReadings })[ui.mtab]?.(g, m, mo, f);
     autoGrow($('#mbody'));
   }

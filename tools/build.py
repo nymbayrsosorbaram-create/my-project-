@@ -33,6 +33,52 @@ for p in sorted((root / 'data').glob('month-*.json')):
     if g:
         g.setdefault('monthly', {})[s['month']] = month_from_sample(s, g)
 
+# Файл ирээгүй сарууд: жилийн төлөвлөгөөнөөс шүүлт, хуваарийг автоматаар үүсгэсэн ноорог.
+# Жинхэнэ файл (data/month-*.json) нэмэгдвэл ноорог автоматаар солигдоно.
+import datetime
+HOLIDAYS = {'03-08'}  # Олон улсын эмэгтэйчүүдийн өдөр
+DRAFTS = [('АХЛАХ', '05'), ('ДУНД', '02'), ('ДУНД', '03'), ('ДУНД', '04'), ('ДУНД', '05')]
+
+
+def draft_month(g, m):
+    mi = data['months'].index(m)
+    others = [o for o in g.get('monthly', {}).values() if not o.get('draft')]
+    exclude = others[0]['exclude'] if others else []
+    rows = {'u': [], 'd': []}
+    for d in g['directions']:
+        if d['name'] in exclude:
+            continue
+        for r in d['rows']:
+            c = r['months'][mi]
+            if c['t']:
+                rows[c['t']].append((r['code'], c.get('code', '') if c['t'] == 'u' else ''))
+    queue = rows['u'] + rows['d']
+    y = int(g['year'][:4]) + (0 if m >= '09' else 1)
+    # Өөр бүлэгт тухайн сарын жинхэнэ хуваарь байвал түүний өдрүүдийг (амралтыг хассан) ашиглана
+    ref = next((o for x in data['groups'] for k, o in x.get('monthly', {}).items() if k == m and not o.get('draft')), None)
+    if ref:
+        dates = [d['date'] for d in ref['schedule']]
+    else:
+        dates, day = [], datetime.date(y, int(m), 1)
+        while day.month == int(m):
+            if day.weekday() < 5 and day.strftime('%m-%d') not in HOLIDAYS:
+                dates.append(day.isoformat())
+            day += datetime.timedelta(days=1)
+    sched = []
+    for dt in dates:
+        code, link = queue.pop(0) if queue else ('', '')
+        sched.append({'date': dt, 'code': code, 'link': link})
+    approver = next((o for o in others), {})
+    return {'draft': True, 'approveWord': 'БАТЛАВ', 'approverTitle': approver.get('approverTitle', 'АРГАЗҮЙЧ'),
+            'approver': approver.get('approver', ''), 'exclude': exclude, 'links': {}, 'notes': {}, 'remark': '',
+            'schedule': sched, 'acts': {}, 'readings': []}
+
+
+for gname, m in DRAFTS:
+    g = next(g for g in data['groups'] if g['name'] == gname)
+    if m not in g.get('monthly', {}):
+        g.setdefault('monthly', {})[m] = draft_month(g, m)
+
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
 assert '/*__PLAN_DATA__*/null' in tpl
 (root / 'index.html').write_text(tpl.replace('/*__PLAN_DATA__*/null', payload), encoding='utf-8')
