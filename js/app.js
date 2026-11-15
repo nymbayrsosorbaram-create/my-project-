@@ -1349,8 +1349,24 @@
     let data;
     try { data = JSON.parse(await file.text()); } catch { toast("Файл буруу байна."); return; }
     if (!data || data.app !== "buteel-dugnelt") { toast("Энэ програмын нөөц файл биш байна."); return; }
+    // Ижил нэр, насны бүлэг аль хэдийн байвал түүнд нь нэгтгэнэ (давхар бүлэг үүсгэхгүй)
+    const gMap = {}, kMap = {};
     for (const g of data.groups || []) {
-      const cur = groupById(g.id);
+      const same = !groupById(g.id) && state.groups.find(x => x.name === g.name && x.ageKey === g.ageKey);
+      if (same) gMap[g.id] = same.id;
+    }
+    const gid = id => gMap[id] || id;
+    for (const k of data.children || []) {
+      k.groupId = gid(k.groupId);
+      const same = !kidById(k.id) && state.children.find(x => x.groupId === k.groupId && x.name === k.name);
+      if (same) { kMap[k.id] = same.id; k.id = same.id; }
+    }
+    for (const r of data.records || []) {
+      if (gMap[r.groupId]) { r.groupId = gMap[r.groupId]; r.groupName = groupById(r.groupId).name; }
+      if (kMap[r.childId]) r.childId = kMap[r.childId];
+    }
+    for (const g of data.groups || []) {
+      const cur = groupById(gid(g.id));
       if (!cur) {
         const { children, ...rest } = g;
         state.groups.push(rest);
