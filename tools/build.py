@@ -27,11 +27,20 @@ def month_from_sample(s, g):
     }
 
 
+# Өмнө нь өөр агуулгаар (ж: Claude-ийн боловсруулсан ноорог) түгээгдсэн сарууд: тэр хувилбарын хэш.
+# Хэрэглэгчийн хөтөчид хадгалагдсан хувилбар нь яг тэр хэвээрээ бол шинэ файлаар автоматаар солигдоно.
+superseded = json.loads((root / 'data' / 'superseded.json').read_text(encoding='utf-8'))
+
 for p in sorted((root / 'data').glob('month-*.json')):
     s = json.loads(p.read_text(encoding='utf-8'))
     g = next((g for g in data['groups'] if g['name'] == s['group']), None)
     if g:
-        g.setdefault('monthly', {})[s['month']] = month_from_sample(s, g)
+        mo = month_from_sample(s, g)
+        sup = superseded.get(s['group'], {}).get(s['month'])
+        if sup:
+            mo['origin'] = p.stem
+            mo['supersedes'] = sup
+        g.setdefault('monthly', {})[s['month']] = mo
 
 # Файл ирээгүй сарууд: жилийн төлөвлөгөөнөөс шүүлт, хуваарийг автоматаар үүсгэсэн ноорог.
 # Жинхэнэ файл (data/month-*.json) нэмэгдвэл ноорог автоматаар солигдоно.

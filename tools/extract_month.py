@@ -60,8 +60,8 @@ def parse(path):
             m = re.match(r'^(БАТЛАВ|ХЯНАСАН)\s+(\S+)\s+(\S+)', t)
             if m and not out['approver']:
                 out['approveWord'], out['approverTitle'], out['approver'] = m.group(1), m.group(2), m.group(3)
-            if t in ('БАТЛАВ', 'ХЯНАСАН') and not out['approver']:
-                pending_appr = t
+            if t in ('БАТЛАВ', 'ХЯНАСАН', 'АТЛАВ') and not out['approver']:
+                pending_appr = 'БАТЛАВ' if t == 'АТЛАВ' else t  # "АТЛАВ" – эхний үсэг алдагдсан
                 continue
             if pending_appr:
                 m = re.match(r'^(\S+)\s+(\S+)$', t)

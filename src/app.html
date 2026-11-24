@@ -348,6 +348,8 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
     // Шинээр нэмэгдсэн сарыг нэмнэ (хэрэглэгчийн бичсэн сарыг дарахгүй)
     Object.keys(om).forEach(k => {
       const cur = g.monthly[k];
+      // Өмнө түгээсэн хувилбар (ноорог) хэвээрээ байвал шинэ хувилбараар солино
+      if (cur && om[k].supersedes?.includes(fnv(JSON.stringify(cur)))) { g.monthly[k] = clone(om[k]); return; }
       const written = cur && Object.values(cur.acts || {}).some(a => a && (a.method || a.competence || a.criteria || (a.steps || []).some(x => x.teacher || x.learner)));
       // Хоосон сар, эсвэл үйл ажиллагаа бичээгүй ноорог сарыг шинэ өгөгдлөөр солино
       if (!cur || (!cur.schedule?.length && !cur.readings?.length) || (cur.draft && !om[k].draft && !written)) g.monthly[k] = clone(om[k]);
@@ -359,6 +361,8 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
   }
   ui.mtab = ui.mtab || 'filter';
 
+  // FNV-1a (UTF-16) – build.py-тэй ижил
+  function fnv(s) { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); }
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch {} };
   const saveUi = () => { try { localStorage.setItem(KEY + ':ui', JSON.stringify(ui)); } catch {} };
 
@@ -737,6 +741,8 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
         <span class="grow"></span>
         <button class="btn mint small" id="m-print">🖨️ Сарыг хэвлэх</button>
         <button class="btn primary small" id="m-word">📄 Сарыг Word-оор</button></div>
+      ${!mo.draft && origMonth(g, m)?.origin && mo.origin !== origMonth(g, m).origin ? `<div class="warn-box">📥 Энэ сарын Word файлын хувилбар системд ирсэн байна. Таны одоогийн хувилбар (засвар орсон ноорог) түүнээс өөр.
+        <button class="btn small primary" id="m-useorig2">Ирсэн хувилбараар солих</button> <button class="btn small" id="m-keep">Одоогийнхоо үлдээх</button></div>` : ''}
       ${mo.draft ? `<div class="warn-box">📝 <b>Ноорог:</b> энэ сарын Word файл ирээгүй тул шүүлт, хуваарийг жилийн төлөвлөгөөнөөс автоматаар үүсгэсэн. Амралтын өдрүүдийг шалгаж, үйл ажиллагаа, чанга уншлагыг бөглөнө үү. <button class="btn small" id="m-undraft">Ноорог тэмдгийг арилгах</button>
         ${origMonth(g, m) ? `<br>📥 Энэ сарын Word файлын хувилбар системд ирсэн байна. <button class="btn small primary" id="m-useorig">Ирсэн хувилбараар солих</button>` : ''}</div>` : ''}
       <div id="mbody"></div>`;
@@ -744,6 +750,13 @@ const ORIGINAL = /*__PLAN_DATA__*/null;
     $('#content').querySelectorAll('[data-t]').forEach(b => b.onclick = () => { ui.mtab = b.dataset.t; render(); });
     $('#m-print').onclick = printMonth; $('#m-word').onclick = exportMonthWord;
     if (mo.draft) $('#m-undraft').onclick = () => { delete mo.draft; save(); render(); };
+    if ($('#m-useorig2')) {
+      $('#m-useorig2').onclick = () => {
+        if (!confirm('Одоогийн хувилбар устаж, ирсэн Word файлын хувилбараар солигдоно. Үргэлжлүүлэх үү?')) return;
+        g.monthly[m] = clone(origMonth(g, m)); save(); render();
+      };
+      $('#m-keep').onclick = () => { mo.origin = origMonth(g, m).origin; save(); render(); };
+    }
     if (mo.draft && origMonth(g, m)) $('#m-useorig').onclick = () => {
       if (!confirm('Энэ сарын ноорогт бичсэн зүйл устаж, ирсэн Word файлын хувилбараар солигдоно. Үргэлжлүүлэх үү?')) return;
       g.monthly[m] = clone(origMonth(g, m)); save(); render();
